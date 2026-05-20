@@ -1,0 +1,2796 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Конструктор тир-листов — Terraforming Mars</title>
+<meta name="description" content="Конструктор личных тир-листов Terraforming Mars с фильтрами по категориям и дополнениям.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<style>
+:root {
+    --bg: #111827;
+    --surface: #16213e;
+    --surface-2: #0f1b33;
+    --surface-3: #111f3a;
+    --line: #234269;
+    --text: #eef4ff;
+    --muted: #9fb0cc;
+    --accent: #e94560;
+    --accent-2: #38bdf8;
+    --good: #65d46e;
+    --warn: #f2bf5b;
+    --card-w: 144px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    border: 1px solid var(--line);
+    background: #14264a;
+    color: var(--text);
+    border-radius: 6px;
+    padding: 9px 12px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+button:hover {
+    background: #1b3765;
+    border-color: #3a77a8;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+button.primary {
+    background: #c01640;
+    border-color: #e94560;
+    font-weight: 700;
+}
+
+button.primary:hover {
+    background: #e94560;
+}
+
+button.ghost {
+    background: transparent;
+}
+
+button.danger {
+    background: #3a1624;
+    border-color: #813044;
+}
+
+button.danger:hover {
+    background: #5a1d31;
+}
+
+a {
+    color: inherit;
+}
+
+.app-shell {
+    min-height: 100vh;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(17, 24, 39, 0.96);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(12px);
+}
+
+.topbar-inner {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 14px 18px;
+}
+
+.brand {
+    min-width: 0;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 13px;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+.back-link:hover {
+    color: var(--text);
+}
+
+h1 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(24px, 3vw, 40px);
+    line-height: 1.05;
+    letter-spacing: 0;
+}
+
+.top-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.presentation-toolbar {
+    display: none;
+}
+
+body.presentation .presentation-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 0 12px;
+    background: linear-gradient(180deg, var(--bg) 0%, rgba(17, 24, 39, 0.92) 70%, rgba(17, 24, 39, 0));
+}
+
+.builder-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+    gap: 16px;
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 16px 18px 28px;
+}
+
+.control-panel {
+    position: sticky;
+    top: 84px;
+    align-self: start;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px;
+    max-height: calc(100vh - 100px);
+    overflow: auto;
+}
+
+.field {
+    display: grid;
+    gap: 7px;
+    margin-bottom: 16px;
+}
+
+.field label,
+.field-title {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.text-input,
+.select-input {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #0e1830;
+    color: var(--text);
+    border-radius: 6px;
+    padding: 10px 11px;
+    outline: none;
+}
+
+.text-input:focus,
+.select-input:focus {
+    border-color: var(--accent-2);
+}
+
+.chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.chip {
+    border-radius: 999px;
+    padding: 7px 10px;
+    background: #0e2445;
+    color: #c7d5ed;
+    border-color: #1d4f7e;
+    font-size: 13px;
+}
+
+.chip.active {
+    background: #e94560;
+    color: #fff;
+    border-color: #ff6f86;
+}
+
+.chip.small {
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
+.split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.range-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+}
+
+input[type="range"] {
+    min-width: 0;
+    width: 100%;
+}
+
+.toggle {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.save-list {
+    display: grid;
+    gap: 8px;
+}
+
+.status-line {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.4;
+    min-height: 18px;
+}
+
+.rating-setup {
+    padding-top: 2px;
+}
+
+.rating-stage {
+    display: none;
+    margin: 0 0 16px;
+}
+
+body.rating-mode .builder-grid {
+    display: block;
+    max-width: 1800px;
+    padding-top: 8px;
+}
+
+body.rating-mode .control-panel,
+body.rating-mode .pool-wrap,
+body.rating-mode #viewModeBtn,
+body.rating-mode #resetBoardBtn {
+    display: none;
+}
+
+body.rating-mode .topbar-inner {
+    max-width: 1800px;
+    padding: 6px 18px;
+    gap: 10px;
+}
+
+body.rating-mode .back-link,
+body.rating-mode #newListBtn,
+body.rating-mode #saveAsBtn {
+    display: none;
+}
+
+body.rating-mode h1 {
+    font-size: clamp(18px, 1.55vw, 24px);
+    line-height: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.rating-mode .top-actions {
+    gap: 6px;
+}
+
+body.rating-mode .top-actions button {
+    min-height: 32px;
+    padding: 6px 10px;
+}
+
+body.rating-mode .board-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+body.rating-mode .board-title {
+    margin-bottom: 2px;
+    font-size: 20px;
+}
+
+body.rating-mode .board-meta {
+    display: none;
+}
+
+body.rating-mode .summary {
+    font-size: 13px;
+}
+
+body.rating-mode .rating-stage {
+    display: grid;
+    gap: 10px;
+}
+
+.rating-workspace {
+    display: grid;
+    grid-template-columns: minmax(430px, 1fr) minmax(440px, 540px);
+    gap: 12px;
+    align-items: start;
+    width: 100%;
+    max-width: 1260px;
+    margin: 0 auto;
+}
+
+.rating-card-panel,
+.rating-data-panel {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-2);
+}
+
+.rating-card-panel {
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    padding: 16px;
+}
+
+.rating-card-frame {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 0;
+}
+
+.rating-card-frame .maker-card {
+    width: min(100%, 420px);
+    cursor: default;
+    pointer-events: none;
+}
+
+.rating-card-frame .maker-card:hover,
+.rating-card-frame .maker-card:focus {
+    border-color: #314c75;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
+    transform: none;
+}
+
+.rating-data-panel {
+    display: grid;
+    grid-template-rows: auto;
+    align-content: start;
+    gap: 12px;
+    overflow: hidden;
+    padding: 14px;
+}
+
+.rating-data-panel > *,
+.rating-range,
+.rating-score-row,
+.rating-actions,
+.rating-progress {
+    min-width: 0;
+}
+
+.rating-kicker {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.rating-card-name {
+    margin: 3px 0 6px;
+    color: #fff;
+    font-size: clamp(24px, 2.15vw, 34px);
+    line-height: 1.03;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+}
+
+.rating-data-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.rating-data-item {
+    border: 1px solid #243f66;
+    border-radius: 7px;
+    padding: 8px;
+    background: #0f1b33;
+}
+
+.rating-base-score-item {
+    display: none;
+}
+
+body.show-scores .rating-base-score-item {
+    display: block;
+}
+
+.rating-data-label {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.rating-data-value {
+    margin-top: 4px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.rating-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.rating-tag {
+    border: 1px solid #2f5d8f;
+    border-radius: 999px;
+    padding: 5px 8px;
+    color: #d8e8ff;
+    background: #0e2445;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.rating-score-row {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+}
+
+.rating-score-value {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 58px;
+    border: 1px solid #6b2b3d;
+    border-radius: 8px;
+    background: #351321;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 900;
+    text-align: center;
+    outline: none;
+}
+
+.rating-score-value:focus {
+    border-color: #f0607b;
+    box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.22);
+}
+
+.rating-score-row.is-invalid .rating-score-value {
+    border-color: #e94560;
+    color: #ff9fb1;
+}
+
+.rating-score-value::-webkit-outer-spin-button,
+.rating-score-value::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+}
+
+.rating-score-value[type="number"] {
+    appearance: textfield;
+}
+
+.rating-range {
+    display: grid;
+    gap: 8px;
+}
+
+.rating-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.rating-actions button {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 48px;
+}
+
+.rating-actions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.56;
+}
+
+.rating-progress {
+    display: grid;
+    gap: 6px;
+}
+
+.rating-progress-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.rating-progress-track {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #0b1222;
+    border: 1px solid #243f66;
+}
+
+.rating-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #e94560);
+    transition: width 0.18s;
+}
+
+body.rating-mode .tier-stack {
+    gap: 8px;
+    --rating-tier-card-w: clamp(124px, 7.8vw, 146px);
+}
+
+body.rating-mode .tier-row {
+    grid-template-columns: 104px minmax(0, 1fr);
+    min-height: calc((var(--rating-tier-card-w) * 4 / 3) + 16px);
+}
+
+body.rating-mode .tier-label {
+    font-size: 24px;
+}
+
+body.rating-mode .tier-label .tier-name {
+    min-height: 34px;
+    background: transparent;
+    pointer-events: none;
+    font-size: 22px;
+}
+
+body.rating-mode .tier-tools {
+    display: none;
+}
+
+body.rating-mode .dropzone {
+    min-height: calc((var(--rating-tier-card-w) * 4 / 3) + 14px);
+    gap: 8px;
+    padding: 8px;
+}
+
+body.rating-mode .maker-card {
+    width: var(--rating-tier-card-w);
+}
+
+body.rating-mode .rating-card-frame .maker-card {
+    width: min(100%, 420px);
+}
+
+.board {
+    min-width: 0;
+}
+
+.board-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 12px;
+}
+
+.summary {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.summary strong {
+    color: #fff;
+}
+
+.board-title {
+    margin: 0 0 4px;
+    color: #fff;
+    font-size: 24px;
+    line-height: 1.1;
+}
+
+.board-meta {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.tier-stack {
+    display: grid;
+    gap: 10px;
+}
+
+.tier-row,
+.pool-wrap {
+    display: grid;
+    grid-template-columns: 122px minmax(0, 1fr);
+    min-height: 178px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface-2);
+}
+
+.tier-label {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 7px;
+    padding: 10px 8px;
+    color: #102033;
+    font-weight: 900;
+    font-size: 30px;
+}
+
+.tier-label .tier-name {
+    width: 100%;
+    min-height: 46px;
+    border: 0;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.18);
+    color: inherit;
+    text-align: center;
+    font-size: 25px;
+    line-height: 1.05;
+    font-weight: 900;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+    padding: 6px 4px;
+}
+
+.tier-tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+}
+
+.tier-color {
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(0, 0, 0, 0.24);
+    border-radius: 5px;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+.tier-tool {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border-color: rgba(0, 0, 0, 0.22);
+    background: rgba(255, 255, 255, 0.18);
+    color: #102033;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.tier-tool:hover {
+    background: rgba(255, 255, 255, 0.34);
+    border-color: rgba(0, 0, 0, 0.34);
+}
+
+.tier-count {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.dropzone {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 8px;
+    min-height: 176px;
+    padding: 8px;
+    background: #111d38;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.dropzone.is-over {
+    background: #162a4d;
+    box-shadow: inset 0 0 0 2px #38bdf8;
+}
+
+.pool-wrap {
+    margin: 0 0 16px;
+    height: min(42vh, 380px);
+    min-height: 220px;
+    overflow: hidden;
+}
+
+.pool-label {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 5px;
+    padding: 14px 8px;
+    background: #24334c;
+    color: #f4f7fb;
+    font-weight: 900;
+    text-align: center;
+}
+
+.pool-zone {
+    height: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+
+.maker-card {
+    width: var(--card-w);
+    border: 1px solid #314c75;
+    border-radius: 8px;
+    background: #0b1222;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    contain: layout paint style;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    overflow: hidden;
+    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+}
+
+.maker-card:hover,
+.maker-card:focus {
+    border-color: #7bb7ff;
+    box-shadow: 0 10px 28px rgba(56, 189, 248, 0.18);
+    transform: translateY(-2px);
+}
+
+.maker-card.dragging {
+    opacity: 0.42;
+}
+
+.maker-card.drag-ghost {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.9;
+    transform: translate3d(-9999px, -9999px, 0);
+    will-change: transform;
+    transition: none;
+}
+
+body.drag-active {
+    cursor: grabbing;
+    user-select: none;
+}
+
+.card-art {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #071124;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.card-art img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: transparent;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.sprite-art {
+    position: absolute;
+    inset: 0;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    background-color: #050b16;
+}
+
+.score-badge {
+    display: none;
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    min-width: 28px;
+    border-radius: 5px;
+    padding: 3px 5px;
+    color: #102033;
+    background: #ffd37a;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+body.show-scores .score-badge {
+    display: inline-block;
+}
+
+.empty-note,
+.load-note {
+    color: var(--muted);
+    padding: 18px;
+    font-size: 14px;
+}
+
+.toast {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 50;
+    max-width: min(420px, calc(100vw - 36px));
+    background: #0f1b33;
+    color: #fff;
+    border: 1px solid #38bdf8;
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body.presentation .topbar,
+body.presentation .control-panel {
+    display: none;
+}
+
+body.presentation .builder-grid {
+    display: block;
+    padding-top: 18px;
+}
+
+body.presentation .board-header {
+    grid-template-columns: 1fr;
+}
+
+body.presentation #resetBoardBtn {
+    display: none;
+}
+
+body.presentation .pool-wrap {
+    display: none;
+}
+
+body.presentation .tier-tools {
+    display: none;
+}
+
+body.presentation .tier-label .tier-name {
+    background: transparent;
+    pointer-events: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+@media (max-width: 1040px) {
+    .topbar-inner,
+    .builder-grid,
+    .board-header,
+    .rating-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .top-actions {
+        justify-content: flex-start;
+    }
+
+    .control-panel {
+        position: static;
+        max-height: none;
+    }
+
+    .rating-card-panel {
+        min-height: 0;
+    }
+
+    body.rating-mode .topbar-inner {
+        grid-template-columns: minmax(0, 1fr) auto;
+        padding: 4px 10px;
+    }
+
+    body.rating-mode .builder-grid {
+        padding: 6px 10px 20px;
+    }
+}
+
+@media (max-width: 1040px) and (min-width: 720px) {
+    body.rating-mode .rating-workspace {
+        grid-template-columns: minmax(300px, 1fr) minmax(300px, 360px);
+        gap: 10px;
+    }
+
+    body.rating-mode .rating-card-panel {
+        padding: 12px;
+    }
+
+    body.rating-mode .rating-card-frame .maker-card {
+        width: min(100%, 360px);
+    }
+
+    body.rating-mode .rating-data-panel {
+        padding: 12px;
+    }
+
+    body.rating-mode .rating-card-name {
+        font-size: clamp(22px, 3.4vw, 30px);
+    }
+
+    body.rating-mode .rating-score-row {
+        grid-template-columns: 64px minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    body.rating-mode .rating-score-value {
+        min-height: 52px;
+        font-size: 28px;
+    }
+
+    body.rating-mode .rating-actions button {
+        min-height: 44px;
+        padding: 7px 8px;
+    }
+}
+
+@media (max-width: 680px) {
+    .topbar-inner,
+    .builder-grid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .tier-row,
+    .pool-wrap {
+        grid-template-columns: 88px minmax(0, 1fr);
+    }
+
+    .tier-label .tier-name {
+        min-height: 40px;
+        font-size: 20px;
+    }
+
+    .dropzone {
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .rating-card-panel {
+        min-height: 0;
+        padding: 10px;
+    }
+
+    .rating-data-panel {
+        padding: 12px;
+    }
+
+    .rating-score-row,
+    .rating-data-grid {
+        grid-template-columns: 1fr;
+    }
+
+    body.rating-mode .tier-row {
+        grid-template-columns: 72px minmax(0, 1fr);
+    }
+
+    body.rating-mode .maker-card {
+        width: 76px;
+    }
+
+    body.rating-mode .rating-card-frame .maker-card {
+        width: min(100%, 320px);
+    }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <a class="back-link" href="index.html">← Terraforming Mars Tier List</a>
+                <h1 id="pageTitle">Конструктор тир-листов</h1>
+            </div>
+            <div class="top-actions">
+                <button id="newListBtn" type="button" class="ghost">Новый</button>
+                <button id="saveBtn" type="button" class="primary">Сохранить</button>
+                <button id="saveAsBtn" type="button">Сохранить как</button>
+                <button id="viewModeBtn" type="button">Просмотр</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="builder-grid">
+        <div class="presentation-toolbar" aria-label="Действия просмотра">
+            <button id="exitViewBtn" type="button">← Назад к редактору</button>
+        </div>
+
+        <aside class="control-panel" aria-label="Настройки конструктора">
+            <div class="field">
+                <label for="listTitle">Название</label>
+                <input id="listTitle" class="text-input" type="text" value="Мой тир-лист Terraforming Mars" maxlength="80">
+            </div>
+
+            <div class="field">
+                <label for="listAuthor">Автор</label>
+                <input id="listAuthor" class="text-input" type="text" placeholder="Кто составил тир-лист" maxlength="48">
+            </div>
+
+            <div class="field">
+                <div class="field-title">Категория</div>
+                <div id="categoryChips" class="chip-grid"></div>
+            </div>
+
+            <div class="field">
+                <div class="field-title">Уровни</div>
+                <div class="split">
+                    <button id="addTierBtn" type="button">Добавить тир</button>
+                    <button id="resetTiersBtn" type="button" class="ghost">Сбросить</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="field-title">Дополнения</div>
+                <div class="split">
+                    <button id="allExpansionsBtn" type="button" class="ghost">Все</button>
+                    <button id="clearExpansionsBtn" type="button" class="ghost">Сбросить</button>
+                </div>
+                <div id="expansionChips" class="chip-grid"></div>
+            </div>
+
+            <div class="field">
+                <label for="searchInput">Поиск</label>
+                <input id="searchInput" class="text-input" type="search" placeholder="Название, тег, дополнение">
+            </div>
+
+            <div class="field">
+                <label for="cardSize">Размер карт</label>
+                <div class="range-row">
+                    <input id="cardSize" type="range" min="92" max="176" step="4" value="144">
+                    <span id="cardSizeValue">144</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="toggle">
+                    <input id="showScores" type="checkbox">
+                    <span>Показывать оценку Руслана</span>
+                </label>
+            </div>
+
+            <div class="field rating-setup">
+                <div class="field-title">Оценивание</div>
+                <button id="startRatingBtn" type="button" class="primary">Начать оценивание</button>
+            </div>
+
+            <div class="field save-list">
+                <div class="field-title">Сохранения</div>
+                <select id="savedLists" class="select-input"></select>
+                <div class="split">
+                    <button id="loadBtn" type="button">Открыть</button>
+                    <button id="deleteBtn" type="button" class="danger">Удалить</button>
+                </div>
+                <div class="split">
+                    <button id="exportBtn" type="button">Экспорт JSON</button>
+                    <button id="importBtn" type="button">Импорт JSON</button>
+                </div>
+                <input id="importFile" type="file" accept="application/json,.json" hidden>
+            </div>
+
+            <div id="statusLine" class="status-line">Загрузка карт...</div>
+        </aside>
+
+        <section class="board" aria-label="Тир-лист">
+            <div class="board-header">
+                <div>
+                    <h2 id="boardTitle" class="board-title">Мой тир-лист корпораций</h2>
+                    <div id="boardMeta" class="board-meta">Автор не указан</div>
+                    <div class="summary" id="summaryLine">Карты загружаются</div>
+                </div>
+                <button id="resetBoardBtn" type="button" class="danger">Очистить расклад</button>
+            </div>
+
+            <section id="ratingStage" class="rating-stage" aria-label="Оценивание карт">
+                <div class="rating-workspace">
+                    <div class="rating-card-panel">
+                        <div id="ratingCardFrame" class="rating-card-frame"></div>
+                    </div>
+                    <aside class="rating-data-panel" aria-label="Данные карты">
+                        <div>
+                            <div id="ratingCardKicker" class="rating-kicker">Карта</div>
+                            <h3 id="ratingCardName" class="rating-card-name">Загрузка...</h3>
+                            <div id="ratingCardTags" class="rating-tags"></div>
+                            <div class="rating-data-grid">
+                                <div class="rating-data-item">
+                                    <div class="rating-data-label">Дополнение</div>
+                                    <div id="ratingExpansion" class="rating-data-value">—</div>
+                                </div>
+                                <div class="rating-data-item">
+                                    <div class="rating-data-label">Тип</div>
+                                    <div id="ratingType" class="rating-data-value">—</div>
+                                </div>
+                                <div class="rating-data-item rating-base-score-item">
+                                    <div class="rating-data-label">Оценка Руслана</div>
+                                    <div id="ratingBaseScore" class="rating-data-value">—</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rating-range">
+                            <div class="rating-score-row">
+                                <input id="ratingScoreInput" class="rating-score-value" type="text" placeholder="0" inputmode="numeric" pattern="[0-9]*" aria-label="Оценка числом от 0 до 100">
+                                <input id="ratingScore" type="range" min="0" max="100" step="1" value="0" aria-label="Оценка карты от 0 до 100">
+                            </div>
+                            <div class="rating-actions">
+                                <button id="rateCardBtn" type="button" class="primary">Оценить</button>
+                                <button id="skipRatingBtn" type="button">Пропустить</button>
+                                <button id="exitRatingBtn" type="button" class="ghost">Фильтры</button>
+                            </div>
+                        </div>
+
+                        <div class="rating-progress">
+                            <div class="rating-progress-label">
+                                <span id="ratingProgressLabel">0 / 0</span>
+                                <span id="ratingRemainingLabel">0 осталось</span>
+                            </div>
+                            <div class="rating-progress-track" aria-hidden="true">
+                                <div id="ratingProgressFill" class="rating-progress-fill"></div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <div class="pool-wrap">
+                <div class="pool-label">
+                    <div>Карты</div>
+                    <div id="poolCount" class="tier-count">0</div>
+                </div>
+                <div id="poolZone" class="dropzone pool-zone" data-zone="pool"></div>
+            </div>
+
+            <div id="tierStack" class="tier-stack"></div>
+        </section>
+    </main>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="tierlist-builder-assets.js?v=metadata-fallback-20260518"></script>
+<script>
+const STORAGE_KEY = "tm-tierlist-builder:saves:v1";
+const DRAFT_KEY = "tm-tierlist-builder:draft:v1";
+const RATING_SESSION_KEY = "tm-tierlist-builder:rating-session:v1";
+const SOURCE_PAGE = "output/tierlist_all_ru.html";
+const SPRITE_URL = "output/sprites/tierlist_all_cards.webp";
+
+const defaultTiers = [
+    {id: "S", label: "S", color: "#ff7f7f"},
+    {id: "A", label: "A", color: "#ffbf7f"},
+    {id: "B", label: "B", color: "#ffdf7f"},
+    {id: "C", label: "C", color: "#bfff7f"},
+    {id: "D", label: "D", color: "#7fff7f"},
+    {id: "F", label: "F", color: "#d7dee8"}
+];
+
+const scoreBands = [
+    {min: 90, tier: "S"},
+    {min: 80, tier: "A"},
+    {min: 70, tier: "B"},
+    {min: 60, tier: "C"},
+    {min: 50, tier: "D"},
+    {min: 0, tier: "F"}
+];
+
+const categoryDefs = [
+    {id: "all", label: "Все карты", types: null},
+    {id: "corporations", label: "Корпорации", types: ["corporation"]},
+    {id: "preludes", label: "Прелюдии", types: ["prelude"]},
+    {id: "projects", label: "Проекты", types: ["active", "automated", "event", "project"]},
+    {id: "ceos", label: "CEO", types: ["ceo"]}
+];
+
+const categoryDefaultTitle = {
+    all: "Мой общий тир-лист Terraforming Mars",
+    corporations: "Мой тир-лист корпораций",
+    preludes: "Мой тир-лист прелюдий",
+    projects: "Мой тир-лист проектов",
+    ceos: "Мой тир-лист CEO"
+};
+
+const state = {
+    allCards: [],
+    activeCategory: "corporations",
+    selectedExpansions: new Set(),
+    search: "",
+    tiers: cloneDefaultTiers(),
+    placements: Object.fromEntries(defaultTiers.map((tier) => [tier.id, []])),
+    currentSaveId: "",
+    cardSize: 144,
+    showScores: false,
+    drag: null,
+    ratings: {},
+    ratingMode: false,
+    ratingQueue: [],
+    ratingIndex: 0,
+    ratingCurrentName: "",
+    activeScore: null,
+    activeScoreText: "0",
+    ratingKeyBuffer: "",
+    ratingKeyBufferTimer: 0
+};
+
+const assetSet = new Set(window.TM_BUILDER_ASSETS?.images || []);
+const cardImageMap = new Map(Object.entries(window.TM_BUILDER_ASSETS?.cardImages || {}));
+const originalImageMap = new Map(Object.entries(window.TM_BUILDER_ASSETS?.originalCardImages || {}));
+const cardMetadataMap = new Map(Object.entries(window.TM_BUILDER_ASSETS?.cardMetadata || {}));
+const builderImageVersion = window.TM_BUILDER_ASSETS?.builderImageVersion || "";
+
+const cardMetadataOverrides = {
+    "Suitable Infrastructure": {type: "prelude", expansion: "Prelude 2"},
+    "Hydrogen Bombardment": {type: "prelude", expansion: "Pathfinders"},
+    "Aerospace Mission": {type: "prelude", expansion: "Community"},
+    "Vital Colony": {type: "prelude", expansion: "Pathfinders"},
+    "CO² Reducers": {type: "prelude", expansion: "Pathfinders"},
+    "Survey Mission": {type: "prelude", expansion: "Pathfinders"},
+    "Valuable Gases": {type: "prelude", expansion: "Community"},
+    "Personal Agenda": {type: "prelude", expansion: "Pathfinders"},
+    "Venus First": {type: "prelude", expansion: "Pathfinders"},
+    "Co-leadership": {type: "prelude", expansion: "CEOs"},
+    "Deep Space Operations": {type: "prelude", expansion: "Pathfinders"},
+    "The New Space Race": {type: "prelude", expansion: "Pathfinders"},
+    "Experienced Martians": {type: "prelude", expansion: "Pathfinders"},
+    "Trade Advance": {type: "prelude", expansion: "Community"},
+    "Crew Training": {type: "prelude", expansion: "Pathfinders"},
+    "Design Company": {type: "prelude", expansion: "Pathfinders"},
+    "Research Grant": {type: "prelude", expansion: "Community"},
+    "Established Methods": {type: "prelude", expansion: "Promo"}
+};
+
+function cloneDefaultTiers() {
+    return defaultTiers.map((tier) => ({...tier}));
+}
+
+function tierIds(tiers = state.tiers) {
+    return tiers.map((tier) => tier.id);
+}
+
+function emptyPlacements(tiers = state.tiers) {
+    return Object.fromEntries(tierIds(tiers).map((id) => [id, []]));
+}
+
+function clampScore(value, fallback = 75) {
+    const number = Number.parseInt(value, 10);
+    if (!Number.isFinite(number)) return fallback;
+    return Math.max(0, Math.min(100, number));
+}
+
+function normalizeRatings(ratings) {
+    const next = {};
+    if (!ratings || typeof ratings !== "object") return next;
+    for (const [name, value] of Object.entries(ratings)) {
+        next[name] = clampScore(value);
+    }
+    return next;
+}
+
+function cardByName(name) {
+    return state.allCards.find((card) => card.name === name) || null;
+}
+
+function tierForScore(score) {
+    const band = scoreBands.find((item) => score >= item.min) || scoreBands[scoreBands.length - 1];
+    const byId = state.tiers.find((tier) => tier.id === band.tier);
+    if (byId) return byId.id;
+    const byLabel = state.tiers.find((tier) => String(tier.label || "").trim().toUpperCase() === band.tier);
+    if (byLabel) return byLabel.id;
+    const fallbackIndex = Math.min(scoreBands.indexOf(band), state.tiers.length - 1);
+    return state.tiers[Math.max(0, fallbackIndex)]?.id || state.tiers[0]?.id || "S";
+}
+
+function hasActiveScore() {
+    return Number.isFinite(state.activeScore);
+}
+
+function parseRatingScoreText(value) {
+    const text = String(value ?? "").trim();
+    if (text === "") return {text, score: null, valid: false};
+    if (!/^\d+$/.test(text)) return {text, score: null, valid: false};
+    const score = Number.parseInt(text, 10);
+    return {text, score, valid: score >= 0 && score <= 100};
+}
+
+function normalizeTiers(tiers, legacyLabels = {}) {
+    const source = Array.isArray(tiers) && tiers.length > 0 ? tiers : cloneDefaultTiers();
+    const seen = new Set();
+    const normalized = [];
+
+    source.forEach((tier, index) => {
+        const fallback = defaultTiers[index] || defaultTiers[defaultTiers.length - 1];
+        const id = String(tier?.id || fallback?.id || `tier-${index + 1}`);
+        if (seen.has(id)) return;
+        seen.add(id);
+        normalized.push({
+            id,
+            label: String(tier?.label || legacyLabels[id] || fallback?.label || id).slice(0, 24),
+            color: /^#[0-9a-f]{6}$/i.test(String(tier?.color || "")) ? tier.color : (fallback?.color || "#d7dee8")
+        });
+    });
+
+    return normalized.length > 0 ? normalized : cloneDefaultTiers();
+}
+
+function normalizePlacements(tiers, savedPlacements = {}) {
+    const next = emptyPlacements(tiers);
+    for (const id of Object.keys(next)) {
+        next[id] = Array.isArray(savedPlacements[id]) ? Array.from(new Set(savedPlacements[id])) : [];
+    }
+    return next;
+}
+
+function setTiers(tiers, placements = state.placements) {
+    state.tiers = normalizeTiers(tiers);
+    state.placements = normalizePlacements(state.tiers, placements);
+}
+
+function qs(selector) {
+    return document.querySelector(selector);
+}
+
+function qsa(selector) {
+    return Array.from(document.querySelectorAll(selector));
+}
+
+function safeStorageRead(key, fallback) {
+    try {
+        const value = localStorage.getItem(key);
+        return value ? JSON.parse(value) : fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function safeStorageWrite(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function safeStorageRemove(key) {
+    try {
+        localStorage.removeItem(key);
+    } catch {
+        // Ignore storage failures; the builder should still work without persistence.
+    }
+}
+
+function ratingRouteEnabled() {
+    return new URL(location.href).searchParams.get("rating") === "1";
+}
+
+function setRatingRoute(enabled) {
+    const url = new URL(location.href);
+    if (enabled) url.searchParams.set("rating", "1");
+    else url.searchParams.delete("rating");
+    history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+function persistRatingSession() {
+    if (!state.ratingMode) {
+        safeStorageRemove(RATING_SESSION_KEY);
+        return;
+    }
+    safeStorageWrite(RATING_SESSION_KEY, {
+        active: true,
+        category: state.activeCategory,
+        expansions: Array.from(state.selectedExpansions),
+        search: state.search,
+        queue: state.ratingQueue,
+        index: state.ratingIndex,
+        currentName: state.ratingCurrentName,
+        activeScoreText: state.activeScoreText,
+        updatedAt: new Date().toISOString()
+    });
+}
+
+function clearRatingSession() {
+    safeStorageRemove(RATING_SESSION_KEY);
+}
+
+function toast(message) {
+    const el = qs("#toast");
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+function currentTitle() {
+    return qs("#listTitle").value.trim() || "Без названия";
+}
+
+function currentAuthor() {
+    return qs("#listAuthor").value.trim();
+}
+
+function updateListHeadings() {
+    const title = currentTitle();
+    const author = currentAuthor();
+    qs("#pageTitle").textContent = title;
+    qs("#boardTitle").textContent = title;
+    qs("#boardMeta").textContent = author ? `Автор: ${author}` : "Автор не указан";
+}
+
+function validateListIdentity() {
+    if (!qs("#listTitle").value.trim()) {
+        toast("Добавь название тир-листа.");
+        qs("#listTitle").focus();
+        return false;
+    }
+    if (!currentAuthor()) {
+        toast("Укажи автора тир-листа.");
+        qs("#listAuthor").focus();
+        return false;
+    }
+    return true;
+}
+
+function normalizeTypeFromClass(cardEl) {
+    const className = Array.from(cardEl.classList).find((item) => item.startsWith("ctype-"));
+    return className ? className.replace("ctype-", "") : "";
+}
+
+function splitList(value) {
+    return String(value || "")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+}
+
+function metadataList(meta, key) {
+    const value = meta?.[key];
+    if (Array.isArray(value)) return value.filter(Boolean);
+    return splitList(value);
+}
+
+function slugCandidates(name) {
+    const normalized = String(name || "")
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[’']/g, "")
+        .replace(/&/g, "and")
+        .replace(/[.:,!?]/g, "")
+        .replace(/[()[\]{}]/g, "")
+        .replace(/[\\/"]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    const underscore = normalized.replace(/\s+/g, "_");
+    const compact = normalized.replace(/[\s_-]+/g, "");
+    const noSlash = underscore.replace(/_+of_The_/g, "_of_The_");
+    return Array.from(new Set([underscore, compact, noSlash].filter(Boolean)));
+}
+
+function imageDirs(card) {
+    if (card.type === "corporation") {
+        return ["images/corporations", "output/tiermaker_template_corps"];
+    }
+    if (card.type === "prelude") {
+        return ["images/preludes", "output/tiermaker_template_preludes"];
+    }
+    if (card.type === "ceo") {
+        return ["images/ceos"];
+    }
+    return ["images/project_cards", "output/tiermaker_template_projects"];
+}
+
+function versionedBuilderImage(url) {
+    if (!url || !builderImageVersion || !url.startsWith("output/builder_cards/")) return url;
+    return `${url}?v=${encodeURIComponent(builderImageVersion)}`;
+}
+
+function imageCandidates(card) {
+    const direct = cardImageMap.get(card.name);
+    const candidates = [];
+    if (direct) candidates.push(versionedBuilderImage(direct));
+    for (const dir of imageDirs(card)) {
+        for (const stem of slugCandidates(card.name)) {
+            const candidate = `${dir}/${encodeURIComponent(stem)}.png`;
+            if (!assetSet.size || assetSet.has(candidate)) {
+                candidates.push(candidate);
+            }
+        }
+    }
+    return Array.from(new Set(candidates));
+}
+
+function originalImageCandidates(card) {
+    const direct = originalImageMap.get(card.name);
+    const candidates = [];
+    if (direct) candidates.push(direct);
+    for (const dir of imageDirs(card)) {
+        for (const stem of slugCandidates(card.name)) {
+            const candidate = `${dir}/${encodeURIComponent(stem)}.png`;
+            if (!assetSet.size || assetSet.has(candidate)) {
+                candidates.push(candidate);
+            }
+        }
+    }
+    return Array.from(new Set(candidates));
+}
+
+function ratingImageCandidates(card) {
+    return Array.from(new Set([...originalImageCandidates(card), ...(card.imageCandidates || [])]));
+}
+
+function scaleCssPixels(value, factor) {
+    return String(value || "")
+        .replace(/-?\d+(?:\.\d+)?px/g, (match) => `${Number.parseFloat(match) * factor}px`);
+}
+
+function categoryForType(type) {
+    if (type === "corporation") return "corporations";
+    if (type === "prelude") return "preludes";
+    if (type === "ceo") return "ceos";
+    return "projects";
+}
+
+function metadataForCard(name) {
+    return {...(cardMetadataMap.get(name) || {}), ...(cardMetadataOverrides[name] || {})};
+}
+
+function expansionForCard(cardEl, metadata) {
+    const rawExpansion = cardEl.getAttribute("data-expansion") || "";
+    if (metadata.expansion && (!rawExpansion || rawExpansion === "Base")) return metadata.expansion;
+    return rawExpansion || metadata.expansion || "Base";
+}
+
+async function loadCards() {
+    const response = await fetch(SOURCE_PAGE, {cache: "no-cache"});
+    if (!response.ok) {
+        throw new Error(`Не удалось загрузить ${SOURCE_PAGE}`);
+    }
+    const html = await response.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const cards = [];
+    const seen = new Set();
+
+    doc.querySelectorAll(".card[data-name]").forEach((cardEl) => {
+        const name = cardEl.getAttribute("data-name") || "";
+        if (!name || seen.has(name)) return;
+        seen.add(name);
+
+        const thumb = cardEl.querySelector(".card-thumb");
+        const metadata = metadataForCard(name);
+        const type = cardMetadataOverrides[name]?.type || normalizeTypeFromClass(cardEl) || metadata.type || "";
+        const label = thumb?.getAttribute("aria-label") || name;
+        const htmlTags = splitList(cardEl.getAttribute("data-tags"));
+        const tags = htmlTags.length > 0 ? htmlTags : metadataList(metadata, "tags");
+        const expansion = expansionForCard(cardEl, metadata);
+        const score = Number(cardEl.getAttribute("data-score") || 0);
+        const htmlMechanics = splitList(cardEl.getAttribute("data-mechanics"));
+        const htmlRoles = splitList(cardEl.getAttribute("data-roles"));
+        const mechanics = htmlMechanics.length > 0 ? htmlMechanics : metadataList(metadata, "mechanics");
+        const roles = htmlRoles.length > 0 ? htmlRoles : metadataList(metadata, "roles");
+
+        const card = {
+            name,
+            label,
+            type,
+            category: categoryForType(type),
+            tags,
+            expansion,
+            score,
+            mechanics,
+            roles,
+            spritePosition: thumb?.style.backgroundPosition || "0px 0px",
+            spriteSize: thumb?.style.backgroundSize || "1440px 5300px"
+        };
+        card.imageCandidates = imageCandidates(card);
+        cards.push(card);
+    });
+
+    cards.sort((a, b) => a.category.localeCompare(b.category) || b.score - a.score || a.name.localeCompare(b.name));
+    state.allCards = cards;
+    const expansions = Array.from(new Set(cards.map((card) => card.expansion).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+    state.selectedExpansions = new Set(expansions);
+    restoreDraft();
+    restoreRatingSession();
+    renderAll();
+}
+
+function activeCategoryDef() {
+    return categoryDefs.find((item) => item.id === state.activeCategory) || categoryDefs[0];
+}
+
+function cardMatchesActiveCategory(card) {
+    const category = activeCategoryDef();
+    return !category?.types || category.types.includes(card.type);
+}
+
+function availableExpansionsForCategory() {
+    return Array.from(new Set(state.allCards
+        .filter(cardMatchesActiveCategory)
+        .map((card) => card.expansion)
+        .filter(Boolean)))
+        .sort((a, b) => a.localeCompare(b));
+}
+
+function normalizeSelectedExpansionsForCategory() {
+    const available = new Set(availableExpansionsForCategory());
+    if (available.size === 0) {
+        state.selectedExpansions = new Set();
+        return [];
+    }
+    if (state.selectedExpansions.size === 0) return Array.from(available);
+    const next = new Set(Array.from(state.selectedExpansions).filter((expansion) => available.has(expansion)));
+    state.selectedExpansions = next.size > 0 ? next : new Set(available);
+    return Array.from(available);
+}
+
+function visibleCards() {
+    const category = categoryDefs.find((item) => item.id === state.activeCategory);
+    const needle = state.search.trim().toLowerCase();
+    return state.allCards.filter((card) => {
+        if (category?.types && !category.types.includes(card.type)) return false;
+        if (state.selectedExpansions.size > 0 && !state.selectedExpansions.has(card.expansion)) return false;
+        if (!needle) return true;
+        const haystack = [
+            card.name,
+            card.label,
+            card.type,
+            card.expansion,
+            card.tags.join(" "),
+            card.mechanics.join(" "),
+            card.roles.join(" ")
+        ].join(" ").toLowerCase();
+        return haystack.includes(needle);
+    });
+}
+
+function restoreRatingSession() {
+    if (!ratingRouteEnabled()) return false;
+    const session = safeStorageRead(RATING_SESSION_KEY, null);
+    if (!session?.active) return false;
+
+    if (categoryDefs.some((category) => category.id === session.category)) {
+        state.activeCategory = session.category;
+    }
+    if (Array.isArray(session.expansions)) {
+        const knownExpansions = new Set(state.allCards.map((card) => card.expansion).filter(Boolean));
+        state.selectedExpansions = new Set(session.expansions.filter((expansion) => knownExpansions.has(expansion)));
+    }
+    state.search = String(session.search || "");
+
+    const queue = Array.isArray(session.queue)
+        ? session.queue.filter((name) => cardByName(name))
+        : [];
+    state.ratingQueue = queue.length > 0 ? queue : visibleCards().map((card) => card.name);
+    state.ratingIndex = Math.max(0, Math.min(Number(session.index) || 0, state.ratingQueue.length));
+    state.ratingMode = true;
+    state.ratingCurrentName = String(session.currentName || currentRatingCard()?.name || "");
+    state.activeScoreText = String(session.activeScoreText ?? "0");
+    const parsed = parseRatingScoreText(state.activeScoreText);
+    state.activeScore = parsed.valid ? parsed.score : null;
+    clearRatingKeyBuffer();
+    return state.ratingQueue.length > 0;
+}
+
+function currentPlacementSet() {
+    const names = new Set();
+    for (const tier of state.tiers) {
+        (state.placements[tier.id] || []).forEach((name) => names.add(name));
+    }
+    return names;
+}
+
+function removeFromPlacements(name) {
+    for (const id of Object.keys(state.placements)) {
+        state.placements[id] = state.placements[id].filter((item) => item !== name);
+    }
+}
+
+function moveCard(name, zone, anchorName = "", after = false) {
+    removeFromPlacements(name);
+    if (zone !== "pool") {
+        const list = state.placements[zone] || [];
+        let index = anchorName ? list.indexOf(anchorName) : -1;
+        if (index < 0) {
+            list.push(name);
+        } else {
+            if (after) index += 1;
+            list.splice(index, 0, name);
+        }
+        state.placements[zone] = list;
+    }
+    persistDraft();
+    renderBoard();
+}
+
+function cycleCard(name) {
+    const tiers = tierIds();
+    let current = "pool";
+    for (const tier of tiers) {
+        if (state.placements[tier].includes(name)) {
+            current = tier;
+            break;
+        }
+    }
+    const next = current === "pool" ? tiers[0] : (tiers[tiers.indexOf(current) + 1] || "pool");
+    moveCard(name, next);
+}
+
+function buildCardArt(card, options = {}) {
+    const art = document.createElement("div");
+    art.className = "card-art";
+
+    const img = document.createElement("img");
+    img.alt = card.label || card.name;
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.draggable = false;
+
+    const fallback = document.createElement("div");
+    fallback.className = "sprite-art";
+    fallback.hidden = true;
+    const spriteScale = (options.spriteWidth || state.cardSize) / 80;
+    fallback.style.backgroundImage = `url("${SPRITE_URL}")`;
+    fallback.style.backgroundSize = scaleCssPixels(card.spriteSize, spriteScale);
+    fallback.style.backgroundPosition = scaleCssPixels(card.spritePosition, spriteScale);
+
+    let candidateIndex = 0;
+    const candidates = options.candidates || card.imageCandidates || [];
+    img.onerror = () => {
+        candidateIndex += 1;
+        if (candidateIndex < candidates.length) {
+            img.src = candidates[candidateIndex];
+            return;
+        }
+        img.hidden = true;
+        fallback.hidden = false;
+    };
+    if (candidates.length > 0) {
+        img.src = candidates[0];
+    } else {
+        img.hidden = true;
+        fallback.hidden = false;
+    }
+
+    const score = document.createElement("span");
+    score.className = "score-badge";
+    score.textContent = state.ratings[card.name] ?? card.score ?? "";
+
+    art.append(img, fallback, score);
+    return art;
+}
+
+function buildCardElement(card) {
+    const el = document.createElement("article");
+    el.className = "maker-card";
+    el.tabIndex = 0;
+    el.dataset.name = card.name;
+    el.dataset.expansion = card.expansion || "";
+    el.title = `${card.name}${card.expansion ? ` · ${card.expansion}` : ""}`;
+    el.ariaLabel = card.label || card.name;
+
+    const art = buildCardArt(card);
+    el.append(art);
+
+    el.addEventListener("pointerdown", (event) => startPointerDrag(event, card.name, el));
+    el.addEventListener("dblclick", () => cycleCard(card.name));
+    el.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            cycleCard(card.name);
+        }
+    });
+
+    return el;
+}
+
+function buildRatingCardElement(card) {
+    const el = document.createElement("article");
+    el.className = "maker-card";
+    el.dataset.name = card.name;
+    el.dataset.expansion = card.expansion || "";
+    el.title = `${card.name}${card.expansion ? ` · ${card.expansion}` : ""}`;
+    el.ariaLabel = card.label || card.name;
+    el.append(buildCardArt(card, {candidates: ratingImageCandidates(card), spriteWidth: 360}));
+    return el;
+}
+
+function startPointerDrag(event, name, el) {
+    if (event.button !== 0) return;
+    if (event.target.closest("input, button, select, a")) return;
+    const rect = el.getBoundingClientRect();
+    state.drag = {
+        name,
+        el,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        lastX: event.clientX,
+        lastY: event.clientY,
+        grabX: Math.max(0, Math.min(event.clientX - rect.left, rect.width)),
+        grabY: Math.max(0, Math.min(event.clientY - rect.top, rect.height)),
+        ghostWidth: rect.width,
+        ghost: null,
+        active: false,
+        raf: 0,
+        overZone: null
+    };
+    document.addEventListener("pointermove", handlePointerMove);
+    document.addEventListener("pointerup", handlePointerUp);
+    document.addEventListener("pointercancel", cancelPointerDrag);
+}
+
+function handlePointerMove(event) {
+    const drag = state.drag;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    drag.lastX = event.clientX;
+    drag.lastY = event.clientY;
+    const dx = drag.lastX - drag.startX;
+    const dy = drag.lastY - drag.startY;
+    if (!drag.active && Math.hypot(dx, dy) > 6) {
+        drag.active = true;
+        drag.ghost = drag.el.cloneNode(true);
+        drag.ghost.classList.add("drag-ghost");
+        drag.ghost.style.width = `${drag.ghostWidth}px`;
+        drag.el.classList.add("dragging");
+        document.body.classList.add("drag-active");
+        document.body.append(drag.ghost);
+    }
+    if (!drag.active) return;
+    event.preventDefault();
+    scheduleDragFrame(drag);
+}
+
+function scheduleDragFrame(drag) {
+    if (drag.raf) return;
+    drag.raf = requestAnimationFrame(() => {
+        drag.raf = 0;
+        updateDragFrame(drag);
+    });
+}
+
+function updateDragFrame(drag) {
+    if (!drag || !drag.active || !drag.ghost) return;
+    drag.ghost.style.transform = `translate3d(${drag.lastX - drag.grabX}px, ${drag.lastY - drag.grabY}px, 0)`;
+    const target = document.elementFromPoint(drag.lastX, drag.lastY);
+    const zone = target?.closest?.(".dropzone");
+    if (zone !== drag.overZone) {
+        if (drag.overZone) drag.overZone.classList.remove("is-over");
+        if (zone) zone.classList.add("is-over");
+        drag.overZone = zone || null;
+    }
+}
+
+function handlePointerUp(event) {
+    const drag = state.drag;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (drag.active) {
+        event.preventDefault();
+        const target = document.elementFromPoint(event.clientX, event.clientY);
+        const zone = target?.closest?.(".dropzone");
+        if (zone) {
+            const targetCard = target.closest?.(".maker-card:not(.drag-ghost)");
+            let anchorName = "";
+            let after = false;
+            if (targetCard && targetCard.parentElement === zone && targetCard.dataset.name !== drag.name) {
+                anchorName = targetCard.dataset.name;
+                const rect = targetCard.getBoundingClientRect();
+                after = event.clientX > rect.left + rect.width / 2 || event.clientY > rect.top + rect.height * 0.72;
+            }
+            moveCard(drag.name, zone.dataset.zone, anchorName, after);
+        }
+    }
+    cleanupPointerDrag();
+}
+
+function cancelPointerDrag() {
+    cleanupPointerDrag();
+}
+
+function cleanupPointerDrag() {
+    const drag = state.drag;
+    if (!drag) return;
+    drag.el.classList.remove("dragging");
+    if (drag.raf) cancelAnimationFrame(drag.raf);
+    document.removeEventListener("pointermove", handlePointerMove);
+    document.removeEventListener("pointerup", handlePointerUp);
+    document.removeEventListener("pointercancel", cancelPointerDrag);
+    if (drag.ghost) drag.ghost.remove();
+    document.body.classList.remove("drag-active");
+    qsa(".dropzone").forEach((zone) => zone.classList.remove("is-over"));
+    state.drag = null;
+}
+
+function addDropHandlers(zone) {
+    if (zone.dataset.dropBound === "1") return;
+    zone.dataset.dropBound = "1";
+    zone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+        zone.classList.add("is-over");
+    });
+    zone.addEventListener("dragleave", (event) => {
+        if (!zone.contains(event.relatedTarget)) {
+            zone.classList.remove("is-over");
+        }
+    });
+    zone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        zone.classList.remove("is-over");
+        const name = event.dataTransfer.getData("text/plain") || state.dragName;
+        if (!name) return;
+        const zoneId = zone.dataset.zone;
+        const targetCard = event.target.closest(".maker-card");
+        let anchorName = "";
+        let after = false;
+        if (targetCard && targetCard.parentElement === zone && targetCard.dataset.name !== name) {
+            anchorName = targetCard.dataset.name;
+            const rect = targetCard.getBoundingClientRect();
+            after = event.clientX > rect.left + rect.width / 2 || event.clientY > rect.top + rect.height * 0.72;
+        }
+        moveCard(name, zoneId, anchorName, after);
+    });
+}
+
+function renderCategoryChips() {
+    const wrap = qs("#categoryChips");
+    wrap.innerHTML = "";
+    for (const item of categoryDefs) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `chip${item.id === state.activeCategory ? " active" : ""}`;
+        button.textContent = item.label;
+        button.addEventListener("click", () => {
+            if (state.activeCategory === item.id) return;
+            state.activeCategory = item.id;
+            state.selectedExpansions = new Set(availableExpansionsForCategory());
+            state.placements = emptyPlacements();
+            state.ratings = {};
+            state.ratingMode = false;
+            state.ratingQueue = [];
+            state.ratingIndex = 0;
+            state.currentSaveId = "";
+            qs("#listTitle").value = categoryDefaultTitle[item.id];
+            updateListHeadings();
+            persistDraft();
+            renderAll();
+        });
+        wrap.append(button);
+    }
+}
+
+function renderExpansionChips(expansions) {
+    const wrap = qs("#expansionChips");
+    wrap.innerHTML = "";
+    for (const expansion of expansions) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "chip small active";
+        button.dataset.expansion = expansion;
+        button.textContent = expansion;
+        button.addEventListener("click", () => {
+            if (state.selectedExpansions.has(expansion)) {
+                state.selectedExpansions.delete(expansion);
+            } else {
+                state.selectedExpansions.add(expansion);
+            }
+            persistDraft();
+            renderAll();
+        });
+        wrap.append(button);
+    }
+}
+
+function updateExpansionChips() {
+    qsa("#expansionChips .chip").forEach((button) => {
+        button.classList.toggle("active", state.selectedExpansions.has(button.dataset.expansion));
+    });
+}
+
+function addTier() {
+    const id = `tier-${crypto.randomUUID()}`;
+    const palette = ["#8bd3ff", "#c7a0ff", "#ffc857", "#7bd88f", "#ff9f80", "#b8c2cc"];
+    state.tiers.push({
+        id,
+        label: "NEW",
+        color: palette[state.tiers.length % palette.length]
+    });
+    state.placements[id] = [];
+    persistDraft();
+    renderAll();
+}
+
+function resetTiers() {
+    setTiers(cloneDefaultTiers(), {});
+    persistDraft();
+    renderAll();
+    toast("Уровни сброшены.");
+}
+
+function moveTier(tierId, direction) {
+    const index = state.tiers.findIndex((tier) => tier.id === tierId);
+    const nextIndex = index + direction;
+    if (index < 0 || nextIndex < 0 || nextIndex >= state.tiers.length) return;
+    const [tier] = state.tiers.splice(index, 1);
+    state.tiers.splice(nextIndex, 0, tier);
+    persistDraft();
+    renderAll();
+}
+
+function deleteTier(tierId) {
+    if (state.tiers.length <= 1) {
+        toast("Нужен хотя бы один тир.");
+        return;
+    }
+    state.tiers = state.tiers.filter((tier) => tier.id !== tierId);
+    delete state.placements[tierId];
+    state.placements = normalizePlacements(state.tiers, state.placements);
+    persistDraft();
+    renderAll();
+}
+
+function updateStatusLine(cardCount = visibleCards().length) {
+    qs("#statusLine").textContent = `${cardCount} карт в текущем шаблоне, сохранений: ${getSaves().length}`;
+}
+
+function shuffleArray(items) {
+    const result = [...items];
+    for (let i = result.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+}
+
+function typeLabel(type) {
+    return {
+        active: "Активная",
+        automated: "Автоматическая",
+        event: "Событие",
+        corporation: "Корпорация",
+        prelude: "Прелюдия",
+        ceo: "CEO",
+        project: "Проект"
+    }[type] || type || "Карта";
+}
+
+function startRatingMode() {
+    const cards = visibleCards();
+    if (cards.length === 0) {
+        toast("Нет карт под текущие фильтры.");
+        return;
+    }
+    state.ratingQueue = shuffleArray(cards.map((card) => card.name));
+    state.ratingIndex = 0;
+    state.ratingCurrentName = "";
+    state.activeScore = 0;
+    state.activeScoreText = "0";
+    state.ratingMode = true;
+    clearRatingKeyBuffer();
+    setPresentationMode(false);
+    setRatingRoute(true);
+    persistRatingSession();
+    renderAll();
+    window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function exitRatingMode() {
+    state.ratingMode = false;
+    state.ratingQueue = [];
+    state.ratingIndex = 0;
+    state.ratingCurrentName = "";
+    state.activeScore = 0;
+    state.activeScoreText = "0";
+    clearRatingKeyBuffer();
+    clearRatingSession();
+    setRatingRoute(false);
+    renderAll();
+}
+
+function currentRatingCard() {
+    const name = state.ratingQueue[state.ratingIndex];
+    return name ? cardByName(name) : null;
+}
+
+function syncRatingScoreControls() {
+    const parsed = parseRatingScoreText(state.activeScoreText);
+    state.activeScore = parsed.valid ? parsed.score : null;
+    const rawNumber = Number.parseInt(parsed.text, 10);
+    const rangeScore = parsed.valid ? parsed.score : clampScore(Number.isFinite(rawNumber) ? rawNumber : 0, 0);
+    qs("#ratingScore").value = rangeScore;
+    qs("#ratingScore").disabled = false;
+    qs("#ratingScoreInput").value = parsed.text;
+    qs(".rating-score-row").classList.toggle("has-score", parsed.valid);
+    qs(".rating-score-row").classList.toggle("is-invalid", parsed.text !== "" && !parsed.valid);
+    qs("#rateCardBtn").disabled = !parsed.valid;
+}
+
+function setRatingScore(value) {
+    state.activeScore = clampScore(value, 0);
+    state.activeScoreText = String(state.activeScore);
+    syncRatingScoreControls();
+    persistRatingSession();
+}
+
+function setRatingScoreInput(value) {
+    state.activeScoreText = String(value ?? "").replace(/[^\d]/g, "");
+    syncRatingScoreControls();
+    persistRatingSession();
+}
+
+function clearRatingKeyBuffer() {
+    state.ratingKeyBuffer = "";
+    if (state.ratingKeyBufferTimer) {
+        clearTimeout(state.ratingKeyBufferTimer);
+        state.ratingKeyBufferTimer = 0;
+    }
+}
+
+function setRatingScoreFromDigits(digit) {
+    if (!/^\d$/.test(digit)) return false;
+    if (state.ratingKeyBufferTimer) clearTimeout(state.ratingKeyBufferTimer);
+    state.ratingKeyBuffer = `${state.ratingKeyBuffer}${digit}`.slice(0, 4);
+    setRatingScoreInput(state.ratingKeyBuffer);
+    state.ratingKeyBufferTimer = setTimeout(clearRatingKeyBuffer, 1600);
+    return true;
+}
+
+function commitRatingScoreInput() {
+    const input = qs("#ratingScoreInput");
+    if (input.value.trim() === "") {
+        setRatingScoreInput("");
+        return false;
+    }
+    setRatingScoreInput(input.value);
+    clearRatingKeyBuffer();
+    return hasActiveScore();
+}
+
+function isRatingSubmitKey(event) {
+    return event.key === "Enter" || event.key === " " || event.key === "Spacebar" || event.code === "Space";
+}
+
+function adjustRatingScore(delta) {
+    clearRatingKeyBuffer();
+    setRatingScore((hasActiveScore() ? state.activeScore : 50) + delta);
+}
+
+function placeRatedCard(name, score) {
+    const targetTier = tierForScore(score);
+    state.ratings[name] = score;
+    removeFromPlacements(name);
+    const list = state.placements[targetTier] || [];
+    const scoreOf = (cardName) => state.ratings[cardName] ?? cardByName(cardName)?.score ?? -1;
+    const index = list.findIndex((existingName) => score > scoreOf(existingName));
+    if (index < 0) list.push(name);
+    else list.splice(index, 0, name);
+    state.placements[targetTier] = list;
+    persistDraft();
+}
+
+function rateCurrentCard() {
+    const card = currentRatingCard();
+    if (!card) return;
+    if (!commitRatingScoreInput() || !hasActiveScore()) {
+        toast("Оценка должна быть от 0 до 100.");
+        qs("#ratingScoreInput").focus();
+        return;
+    }
+    placeRatedCard(card.name, clampScore(state.activeScore));
+    state.ratingIndex += 1;
+    state.ratingCurrentName = "";
+    state.activeScore = 0;
+    state.activeScoreText = "0";
+    clearRatingKeyBuffer();
+    renderBoard();
+    renderRatingStage();
+    persistRatingSession();
+}
+
+function skipRatingCard() {
+    if (!currentRatingCard()) return;
+    state.ratingIndex += 1;
+    state.ratingCurrentName = "";
+    state.activeScore = 0;
+    state.activeScoreText = "0";
+    clearRatingKeyBuffer();
+    renderRatingStage();
+    persistRatingSession();
+}
+
+function renderRatingTags(card) {
+    const wrap = qs("#ratingCardTags");
+    wrap.innerHTML = "";
+    const tags = [...card.tags, ...card.mechanics, ...card.roles].filter(Boolean).slice(0, 10);
+    if (tags.length === 0) {
+        const tag = document.createElement("span");
+        tag.className = "rating-tag";
+        tag.textContent = "Без тегов";
+        wrap.append(tag);
+        return;
+    }
+    for (const label of tags) {
+        const tag = document.createElement("span");
+        tag.className = "rating-tag";
+        tag.textContent = label;
+        wrap.append(tag);
+    }
+}
+
+function renderRatingStage() {
+    document.body.classList.toggle("rating-mode", state.ratingMode);
+    const stage = qs("#ratingStage");
+    stage.hidden = !state.ratingMode;
+    if (!state.ratingMode) return;
+
+    const total = state.ratingQueue.length;
+    const done = Math.min(state.ratingIndex, total);
+    const card = currentRatingCard();
+    const progress = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    qs("#ratingProgressLabel").textContent = `${done} / ${total}`;
+    qs("#ratingRemainingLabel").textContent = `${Math.max(0, total - done)} осталось`;
+    qs("#ratingProgressFill").style.width = `${progress}%`;
+
+    const frame = qs("#ratingCardFrame");
+    frame.innerHTML = "";
+
+    if (!card) {
+        const empty = document.createElement("div");
+        empty.className = "empty-note";
+        empty.textContent = total > 0 ? "Оценивание завершено." : "Нет карт под текущие фильтры.";
+        frame.append(empty);
+        qs("#ratingCardKicker").textContent = "Готово";
+        qs("#ratingCardName").textContent = "Все карты пройдены";
+        qs("#ratingCardTags").innerHTML = "";
+        qs("#ratingExpansion").textContent = "—";
+        qs("#ratingType").textContent = "—";
+        qs("#ratingBaseScore").textContent = "—";
+        qs("#rateCardBtn").disabled = true;
+        qs("#skipRatingBtn").disabled = true;
+        qs("#ratingScore").disabled = true;
+        qs("#ratingScoreInput").disabled = true;
+        qs("#ratingScoreInput").value = "";
+        qs(".rating-score-row").classList.remove("has-score");
+        qs(".rating-score-row").classList.remove("is-invalid");
+        return;
+    }
+
+    if (state.ratingCurrentName !== card.name) {
+        clearRatingKeyBuffer();
+        state.ratingCurrentName = card.name;
+        state.activeScore = Number.isFinite(state.ratings[card.name]) ? clampScore(state.ratings[card.name]) : 0;
+        state.activeScoreText = String(state.activeScore);
+    }
+
+    frame.append(buildRatingCardElement(card));
+    qs("#ratingCardKicker").textContent = card.label && card.label !== card.name ? card.name : `${done + 1} из ${total}`;
+    qs("#ratingCardName").textContent = card.label || card.name;
+    qs("#ratingExpansion").textContent = card.expansion || "Base";
+    qs("#ratingType").textContent = typeLabel(card.type);
+    qs("#ratingBaseScore").textContent = card.score ? String(card.score) : "—";
+    renderRatingTags(card);
+    qs("#skipRatingBtn").disabled = false;
+    qs("#ratingScoreInput").disabled = false;
+    syncRatingScoreControls();
+}
+
+function renderBoard() {
+    const cards = visibleCards();
+    const byName = new Map(state.allCards.map((card) => [card.name, card]));
+    const visibleNames = new Set(cards.map((card) => card.name));
+    const placed = currentPlacementSet();
+    const tierStack = qs("#tierStack");
+    tierStack.innerHTML = "";
+
+    for (const tier of state.tiers) {
+        const row = document.createElement("section");
+        row.className = "tier-row";
+
+        const label = document.createElement("div");
+        label.className = "tier-label";
+        label.style.background = tier.color;
+
+        const input = document.createElement("textarea");
+        input.className = "tier-name";
+        input.value = tier.label || tier.id;
+        input.maxLength = 24;
+        input.rows = 2;
+        input.ariaLabel = `Название тира ${tier.label || tier.id}`;
+        input.addEventListener("input", () => {
+            tier.label = input.value || tier.id;
+            persistDraft();
+        });
+
+        const count = document.createElement("div");
+        count.className = "tier-count";
+        const visibleTierCards = (state.placements[tier.id] || []).filter((name) => visibleNames.has(name));
+        count.textContent = visibleTierCards.length;
+
+        const tools = document.createElement("div");
+        tools.className = "tier-tools";
+
+        const color = document.createElement("input");
+        color.type = "color";
+        color.className = "tier-color";
+        color.value = tier.color;
+        color.title = "Цвет тира";
+        color.ariaLabel = `Цвет тира ${tier.label || tier.id}`;
+        color.addEventListener("input", () => {
+            tier.color = color.value;
+            label.style.background = tier.color;
+            persistDraft();
+        });
+
+        const up = document.createElement("button");
+        up.type = "button";
+        up.className = "tier-tool";
+        up.textContent = "↑";
+        up.title = "Поднять тир";
+        up.ariaLabel = `Поднять тир ${tier.label || tier.id}`;
+        up.addEventListener("click", () => moveTier(tier.id, -1));
+
+        const down = document.createElement("button");
+        down.type = "button";
+        down.className = "tier-tool";
+        down.textContent = "↓";
+        down.title = "Опустить тир";
+        down.ariaLabel = `Опустить тир ${tier.label || tier.id}`;
+        down.addEventListener("click", () => moveTier(tier.id, 1));
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "tier-tool";
+        remove.textContent = "×";
+        remove.title = "Удалить тир";
+        remove.ariaLabel = `Удалить тир ${tier.label || tier.id}`;
+        remove.addEventListener("click", () => deleteTier(tier.id));
+
+        tools.append(color, up, down, remove);
+        label.append(input, tools, count);
+
+        const zone = document.createElement("div");
+        zone.className = "dropzone";
+        zone.dataset.zone = tier.id;
+        addDropHandlers(zone);
+
+        for (const name of visibleTierCards) {
+            const card = byName.get(name);
+            if (card) zone.append(buildCardElement(card));
+        }
+
+        row.append(label, zone);
+        tierStack.append(row);
+    }
+
+    const pool = qs("#poolZone");
+    pool.innerHTML = "";
+    addDropHandlers(pool);
+    const unranked = cards.filter((card) => !placed.has(card.name));
+    for (const card of unranked) {
+        pool.append(buildCardElement(card));
+    }
+    if (unranked.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty-note";
+        empty.textContent = "Нет нераспределённых карт для текущих фильтров.";
+        pool.append(empty);
+    }
+
+    qs("#poolCount").textContent = unranked.length;
+    const placedVisible = cards.length - unranked.length;
+    qs("#summaryLine").innerHTML = `<strong>${placedVisible}</strong> распределено из <strong>${cards.length}</strong> карт`;
+    updateStatusLine(cards.length);
+}
+
+function renderSavedList() {
+    const select = qs("#savedLists");
+    const saves = getSaves().sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+    select.innerHTML = "";
+    if (saves.length === 0) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "Сохранений нет";
+        select.append(option);
+        return;
+    }
+    for (const save of saves) {
+        const option = document.createElement("option");
+        option.value = save.id;
+        option.textContent = `${save.title || "Без названия"}${save.author ? ` · ${save.author}` : ""}`;
+        select.append(option);
+    }
+    if (state.currentSaveId) select.value = state.currentSaveId;
+}
+
+function renderAll() {
+    const availableExpansions = normalizeSelectedExpansionsForCategory();
+    document.body.style.setProperty("--card-w", `${state.cardSize}px`);
+    document.body.classList.toggle("show-scores", state.showScores);
+    qs("#cardSize").value = state.cardSize;
+    qs("#cardSizeValue").textContent = state.cardSize;
+    qs("#showScores").checked = state.showScores;
+    qs("#searchInput").value = state.search;
+    updateListHeadings();
+    renderCategoryChips();
+    renderExpansionChips(availableExpansions);
+    updateExpansionChips();
+    renderSavedList();
+    renderBoard();
+    renderRatingStage();
+}
+
+function getSaves() {
+    const saves = safeStorageRead(STORAGE_KEY, []);
+    return Array.isArray(saves) ? saves : [];
+}
+
+function buildSave(id = state.currentSaveId || crypto.randomUUID()) {
+    const now = new Date().toISOString();
+    const previous = getSaves().find((save) => save.id === id);
+    return {
+        id,
+        title: currentTitle(),
+        author: currentAuthor(),
+        category: state.activeCategory,
+        expansions: Array.from(state.selectedExpansions),
+        tiers: state.tiers.map((tier) => ({...tier})),
+        placements: state.placements,
+        ratings: state.ratings,
+        cardSize: state.cardSize,
+        showScores: state.showScores,
+        createdAt: previous?.createdAt || now,
+        updatedAt: now
+    };
+}
+
+function applySave(save) {
+    state.currentSaveId = save.id || "";
+    state.activeCategory = save.category || "corporations";
+    state.selectedExpansions = new Set(Array.isArray(save.expansions) ? save.expansions : []);
+    setTiers(normalizeTiers(save.tiers, save.tierLabels || {}), save.placements || {});
+    state.ratings = normalizeRatings(save.ratings);
+    state.cardSize = Number(save.cardSize || 144);
+    state.showScores = Boolean(save.showScores);
+    state.search = "";
+    state.ratingMode = false;
+    state.ratingQueue = [];
+    state.ratingIndex = 0;
+    state.ratingCurrentName = "";
+    state.activeScore = 0;
+    state.activeScoreText = "0";
+    clearRatingSession();
+    setRatingRoute(false);
+    qs("#listTitle").value = save.title || categoryDefaultTitle[state.activeCategory] || "Мой тир-лист Terraforming Mars";
+    qs("#listAuthor").value = save.author || "";
+    persistDraft();
+    renderAll();
+}
+
+function saveCurrent(forceNew = false) {
+    if (!validateListIdentity()) return;
+    const saves = getSaves();
+    const id = forceNew ? crypto.randomUUID() : state.currentSaveId || crypto.randomUUID();
+    const save = buildSave(id);
+    const index = saves.findIndex((item) => item.id === id);
+    if (index >= 0) saves[index] = save;
+    else saves.push(save);
+    if (!safeStorageWrite(STORAGE_KEY, saves)) {
+        toast("Не удалось записать localStorage.");
+        return;
+    }
+    state.currentSaveId = id;
+    persistDraft();
+    renderSavedList();
+    updateStatusLine();
+    toast("Тир-лист сохранён.");
+}
+
+function deleteCurrentSave() {
+    const id = qs("#savedLists").value;
+    if (!id) return;
+    const saves = getSaves().filter((save) => save.id !== id);
+    safeStorageWrite(STORAGE_KEY, saves);
+    if (state.currentSaveId === id) state.currentSaveId = "";
+    renderSavedList();
+    updateStatusLine();
+    toast("Сохранение удалено.");
+}
+
+function persistDraft() {
+    const draft = buildSave(state.currentSaveId || "draft");
+    safeStorageWrite(DRAFT_KEY, draft);
+}
+
+function restoreDraft() {
+    const draft = safeStorageRead(DRAFT_KEY, null);
+    if (!draft) {
+        qs("#listTitle").value = categoryDefaultTitle[state.activeCategory];
+        qs("#listAuthor").value = "";
+        return;
+    }
+    state.currentSaveId = draft.id === "draft" ? "" : (draft.id || "");
+    state.activeCategory = draft.category || state.activeCategory;
+    state.selectedExpansions = new Set(Array.isArray(draft.expansions) ? draft.expansions : Array.from(state.selectedExpansions));
+    setTiers(normalizeTiers(draft.tiers, draft.tierLabels || {}), draft.placements || {});
+    state.ratings = normalizeRatings(draft.ratings);
+    state.cardSize = Number(draft.cardSize || state.cardSize);
+    state.showScores = Boolean(draft.showScores);
+    qs("#listTitle").value = draft.title || categoryDefaultTitle[state.activeCategory];
+    qs("#listAuthor").value = draft.author || "";
+}
+
+function resetBoard() {
+    state.placements = emptyPlacements();
+    state.ratings = {};
+    state.ratingCurrentName = "";
+    persistDraft();
+    renderBoard();
+    renderRatingStage();
+    toast("Расклад очищен.");
+}
+
+function newList() {
+    const author = qs("#listAuthor").value;
+    state.currentSaveId = "";
+    state.tiers = cloneDefaultTiers();
+    state.placements = emptyPlacements();
+    state.ratings = {};
+    state.ratingMode = false;
+    state.ratingQueue = [];
+    state.ratingIndex = 0;
+    state.ratingCurrentName = "";
+    state.activeScore = 0;
+    state.activeScoreText = "0";
+    clearRatingSession();
+    setRatingRoute(false);
+    qs("#listTitle").value = categoryDefaultTitle[state.activeCategory];
+    qs("#listAuthor").value = author;
+    persistDraft();
+    renderAll();
+}
+
+function exportCurrent() {
+    if (!validateListIdentity()) return;
+    const save = buildSave(state.currentSaveId || crypto.randomUUID());
+    const blob = new Blob([JSON.stringify(save, null, 2)], {type: "application/json"});
+    const link = document.createElement("a");
+    const safeTitle = `${save.title || "tm-tierlist"}_${save.author || "author"}`.replace(/[^\wа-яА-ЯёЁ-]+/g, "_").slice(0, 80);
+    link.href = URL.createObjectURL(blob);
+    link.download = `${safeTitle}.json`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+}
+
+function importSave(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const save = JSON.parse(String(reader.result || "{}"));
+            save.id = crypto.randomUUID();
+            save.updatedAt = new Date().toISOString();
+            applySave(save);
+            saveCurrent(false);
+            toast("JSON импортирован.");
+        } catch {
+            toast("Не удалось прочитать JSON.");
+        }
+    };
+    reader.readAsText(file, "utf-8");
+}
+
+function setPresentationMode(enabled) {
+    document.body.classList.toggle("presentation", enabled);
+    qs("#viewModeBtn").textContent = enabled ? "Редактировать" : "Просмотр";
+}
+
+function bindControls() {
+    qs("#listTitle").addEventListener("input", () => {
+        updateListHeadings();
+        persistDraft();
+    });
+    qs("#listAuthor").addEventListener("input", () => {
+        updateListHeadings();
+        persistDraft();
+    });
+    qs("#searchInput").addEventListener("input", (event) => {
+        state.search = event.target.value;
+        renderBoard();
+    });
+    qs("#cardSize").addEventListener("input", (event) => {
+        state.cardSize = Number(event.target.value);
+        persistDraft();
+        renderAll();
+    });
+    qs("#showScores").addEventListener("change", (event) => {
+        state.showScores = event.target.checked;
+        persistDraft();
+        renderAll();
+    });
+    qs("#startRatingBtn").addEventListener("click", startRatingMode);
+    qs("#ratingScore").addEventListener("input", (event) => {
+        clearRatingKeyBuffer();
+        setRatingScore(event.target.value);
+    });
+    qs("#ratingScoreInput").addEventListener("focus", (event) => {
+        event.target.select();
+    });
+    qs("#ratingScoreInput").addEventListener("input", (event) => {
+        clearRatingKeyBuffer();
+        setRatingScoreInput(event.target.value);
+    });
+    qs("#ratingScoreInput").addEventListener("keydown", (event) => {
+        if (isRatingSubmitKey(event)) {
+            event.preventDefault();
+            rateCurrentCard();
+        }
+        if (event.key === "Escape") {
+            event.preventDefault();
+            commitRatingScoreInput();
+            event.target.blur();
+        }
+    });
+    qs("#rateCardBtn").addEventListener("click", rateCurrentCard);
+    qs("#skipRatingBtn").addEventListener("click", skipRatingCard);
+    qs("#exitRatingBtn").addEventListener("click", exitRatingMode);
+    qs("#allExpansionsBtn").addEventListener("click", () => {
+        state.selectedExpansions = new Set(availableExpansionsForCategory());
+        persistDraft();
+        renderAll();
+    });
+    qs("#clearExpansionsBtn").addEventListener("click", () => {
+        state.selectedExpansions = new Set();
+        persistDraft();
+        renderAll();
+    });
+    qs("#addTierBtn").addEventListener("click", addTier);
+    qs("#resetTiersBtn").addEventListener("click", resetTiers);
+    qs("#newListBtn").addEventListener("click", newList);
+    qs("#saveBtn").addEventListener("click", () => saveCurrent(false));
+    qs("#saveAsBtn").addEventListener("click", () => saveCurrent(true));
+    qs("#resetBoardBtn").addEventListener("click", resetBoard);
+    qs("#loadBtn").addEventListener("click", () => {
+        const id = qs("#savedLists").value;
+        const save = getSaves().find((item) => item.id === id);
+        if (save) {
+            applySave(save);
+            toast("Тир-лист открыт.");
+        }
+    });
+    qs("#deleteBtn").addEventListener("click", deleteCurrentSave);
+    qs("#exportBtn").addEventListener("click", exportCurrent);
+    qs("#importBtn").addEventListener("click", () => qs("#importFile").click());
+    qs("#importFile").addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (file) importSave(file);
+        event.target.value = "";
+    });
+    qs("#viewModeBtn").addEventListener("click", () => {
+        setPresentationMode(!document.body.classList.contains("presentation"));
+    });
+    qs("#exitViewBtn").addEventListener("click", () => {
+        setPresentationMode(false);
+    });
+    document.addEventListener("keydown", (event) => {
+        if (state.ratingMode && !event.target.closest("input, textarea, select")) {
+            if (/^\d$/.test(event.key)) {
+                event.preventDefault();
+                setRatingScoreFromDigits(event.key);
+                return;
+            }
+            if (event.key === "Backspace" && state.ratingKeyBuffer) {
+                event.preventDefault();
+                state.ratingKeyBuffer = state.ratingKeyBuffer.slice(0, -1);
+                setRatingScoreInput(state.ratingKeyBuffer);
+                return;
+            }
+            if (isRatingSubmitKey(event)) {
+                event.preventDefault();
+                rateCurrentCard();
+                return;
+            }
+            if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+                event.preventDefault();
+                adjustRatingScore(event.shiftKey ? 5 : 1);
+                return;
+            }
+            if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+                event.preventDefault();
+                adjustRatingScore(event.shiftKey ? -5 : -1);
+                return;
+            }
+            if (event.key.toLowerCase() === "s") {
+                event.preventDefault();
+                skipRatingCard();
+                return;
+            }
+            if (event.key === "Escape") {
+                event.preventDefault();
+                exitRatingMode();
+                return;
+            }
+        }
+        if (event.key === "Escape" && document.body.classList.contains("presentation")) {
+            setPresentationMode(false);
+        }
+    });
+}
+
+bindControls();
+loadCards().catch((error) => {
+    qs("#statusLine").textContent = error.message;
+    qs("#summaryLine").textContent = "Не удалось загрузить карты";
+    qs("#poolZone").innerHTML = '<div class="load-note">Проверьте, что страница открыта через локальный сервер или GitHub Pages.</div>';
+});
+</script>
+</body>
+</html>

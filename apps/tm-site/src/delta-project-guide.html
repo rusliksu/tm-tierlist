@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terraforming Mars: Delta Project — правила и мета</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; line-height: 1.6; }
+  .container { max-width: 980px; margin: 0 auto; padding: 20px; }
+  h1 { color: #ff6b35; text-align: center; font-size: 2em; margin: 30px 0 10px; }
+  .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 1.08em; }
+  h2 { color: #c4a35a; border-bottom: 2px solid #333; padding-bottom: 8px; margin: 32px 0 15px; font-size: 1.4em; }
+  h3 { color: #8ecae6; margin: 20px 0 10px; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0 8px 24px; }
+  li { margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.95em; }
+  th { background: #16213e; color: #c4a35a; padding: 8px 10px; text-align: left; border: 1px solid #333; }
+  td { padding: 8px 10px; border: 1px solid #333; background: #0f1a2e; vertical-align: top; }
+  a { color: #8ecae6; }
+  .back { text-align: center; margin: 20px 0; }
+  .back a { color: #888; text-decoration: none; }
+  .back a:hover { color: #ff6b35; }
+  .toc { background: #16213e; border-radius: 8px; padding: 15px 25px; margin: 20px 0; }
+  .toc a { color: #8ecae6; text-decoration: none; display: block; padding: 3px 0; }
+  .toc a:hover { color: #ff6b35; }
+  .tip { background: #16213e; border-radius: 8px; padding: 12px 15px; margin: 10px 0; border-left: 3px solid #ff6b35; }
+  .good { background: #0f1a18; border-left-color: #2a9d8f; }
+  .warning { background: #2a1015; border-left-color: #e63946; }
+  .figure { margin: 18px 0; background: #0f1a2e; border: 1px solid #2f4d69; border-radius: 8px; padding: 14px; }
+  .figure img { display: block; width: 100%; height: auto; border-radius: 4px; }
+  .figure figcaption { color: #aaa; font-size: 0.9em; margin-top: 8px; text-align: center; }
+  .rule-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+  .rule-card { background: #0f1a2e; border: 1px solid #293f57; border-radius: 8px; padding: 14px; }
+  .rule-card strong { display: block; color: #ffb36b; margin-bottom: 5px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+  .badge-a { background: #ff8844; color: white; }
+  .badge-b { background: #ddcc44; color: #222; }
+  .badge-c { background: #88cc44; color: #222; }
+  .badge-d { background: #888; color: white; }
+  .vp { color: #ffcf4a; font-weight: bold; }
+  .formula { background: #1a1015; border-left: 3px solid #e76f51; border-radius: 8px; padding: 12px 15px; margin: 12px 0; }
+  footer { text-align: center; color: #555; margin: 40px 0 20px; font-size: 0.85em; }
+  @media (max-width: 700px) {
+    .container { padding: 10px; }
+    table { font-size: 0.85em; }
+    .rule-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="back"><a href="index.html">&larr; Tier List</a></div>
+
+<h1>Terraforming Mars: Delta Project</h1>
+<p class="subtitle">Правила фан-дополнения Dutch Open 2026 и практическая мета для 3P / WGT / All Expansions</p>
+
+<div class="toc">
+<strong>Содержание:</strong>
+<a href="#overview">1. Что добавляет Delta Project</a>
+<a href="#visual">2. Быстрая памятка картинкой</a>
+<a href="#rules">3. Правила действия</a>
+<a href="#track">4. Трек и награды</a>
+<a href="#meta">5. Мета: что меняется в оценке карт</a>
+<a href="#timing">6. Тайминг и типичные ошибки</a>
+<a href="#synergy">7. Синергии</a>
+<a href="#sources">8. Источники</a>
+</div>
+
+<h2 id="overview">1. Что добавляет Delta Project</h2>
+
+<p><strong>Delta Project</strong> — мини-дополнение, сделанное для Dutch Open Terraforming Mars 2026. В текущей web-реализации это opt-in expansion: если опция включена, каждый игрок автоматически начинает с Prelude/action карты <strong>Delta Project</strong> в tableau. Её не драфтят, она не лежит в обычной колоде и доступна с первого поколения.</p>
+
+<div class="tip good">
+<strong>Главная идея:</strong> Delta превращает лишнюю энергию в продвижение по общему треку. Но движение ограничено тегами, поэтому ценность получают не просто energy cards, а связка <strong>energy + дешёвые теги + правильный landing reward</strong>.
+</div>
+
+<div class="rule-grid">
+  <div class="rule-card"><strong>Ресурс действия</strong> 1 energy = 1 step. Можно за одно действие пройти несколько шагов.</div>
+  <div class="rule-card"><strong>Ограничение</strong> Чтобы дойти до позиции, нужны все теги на пути к ней; wild tag закрывает один отсутствующий тег.</div>
+  <div class="rule-card"><strong>Награда</strong> Получаешь только награду клетки, где остановился. Промежуточные клетки не платят.</div>
+  <div class="rule-card"><strong>Гонка</strong> Клетки 2 VP и 5 VP эксклюзивны: на каждой может стоять только один игрок.</div>
+</div>
+
+<h2 id="visual">2. Быстрая памятка картинкой</h2>
+
+<figure class="figure">
+  <img src="images/delta-project/delta-project-explainer.png" alt="Delta Project rules and meta explainer">
+  <figcaption>Инфографика по правилам, треку, наградам и базовой мете Delta Project.</figcaption>
+</figure>
+
+<figure class="figure">
+  <img src="images/delta-project/delta-project-board-live.png" alt="Delta Project board screenshot from a live staging game">
+  <figcaption>Скриншот Delta-панели из web-игры: теги сверху, слоты игроков в центре, награды снизу.</figcaption>
+</figure>
+
+<h2 id="rules">3. Правила действия</h2>
+
+<h3>Setup</h3>
+<ul>
+<li>Каждый игрок начинает на позиции 0 Delta-трека.</li>
+<li>Каждый игрок получает карту Delta Project как постоянное action-умение.</li>
+<li>Если игра идёт с Prelude, Delta всё равно не занимает обычный draft-pick; она добавляется всем отдельно.</li>
+</ul>
+
+<h3>Action</h3>
+<ol>
+<li>Выбери количество шагов X.</li>
+<li>Заплати X energy.</li>
+<li>Передвинь куб на X позиций вперёд, если цель легальна.</li>
+<li>Получи награду только позиции, на которую приземлился.</li>
+</ol>
+
+<div class="tip">
+<strong>Проверка тегов в web implementation:</strong> чтобы дойти до цели, у тебя должны быть все required tags до этой позиции: Building, затем Power, Earth, Space, Science, Plant, Microbe, Jovian, Animal. Если какого-то тега нет, один wild tag может заменить один отсутствующий тег. Для позиций 10 и 11 отдельного тега нет, но всё равно нужно пройти все теги до Animal.
+</div>
+
+<div class="tip warning">
+<strong>Мульти-шаг не собирает всё по дороге.</strong> Если прыгнул с 0 сразу на Earth, ты получаешь только +2 MC production, но не получаешь 2 steel/plants и Power production reward.
+</div>
+
+<h2 id="track">4. Трек и награды</h2>
+
+<table>
+<tr><th>Позиция</th><th>Required tag</th><th>Reward when landed on</th><th>Оценка</th></tr>
+<tr><td>0</td><td>&mdash;</td><td>Старт</td><td>&mdash;</td></tr>
+<tr><td>1</td><td>Building</td><td>2 steel или 2 plants</td><td><span class="badge badge-c">Tempo</span> Хорошо, если ресурс сразу тратится.</td></tr>
+<tr><td>2</td><td>Power</td><td>+1 energy production или +1 heat production</td><td><span class="badge badge-a">Strong</span> Ранний production и топливо для будущей Delta.</td></tr>
+<tr><td>3</td><td>Earth</td><td>+2 MC production</td><td><span class="badge badge-a">Strong</span> Отличная ранняя остановка.</td></tr>
+<tr><td>4</td><td>Space</td><td>+1 titanium production</td><td><span class="badge badge-a">Strong</span> Очень сильна при Space-heavy руке.</td></tr>
+<tr><td>5</td><td>Science</td><td>Посмотри 4 карты, оставь до 2, остальные сбрось</td><td><span class="badge badge-a">Strong</span> Card selection без переплаты за мусор.</td></tr>
+<tr><td>6</td><td>Plant</td><td>+1 plant за каждый plant tag в игре</td><td><span class="badge badge-b">Scaling</span> Хорошо только при плотности plant tags.</td></tr>
+<tr><td>7</td><td>Microbe</td><td>Повтори уже использованное blue card action this generation</td><td><span class="badge badge-b">Combo</span> Сильно с дорогими actions, пусто без цели.</td></tr>
+<tr><td>8</td><td>Jovian</td><td>Получаешь постоянный Jovian tag</td><td><span class="badge badge-b">Payoff</span> Важно для Jovian multipliers и tag triggers.</td></tr>
+<tr><td>9</td><td>Animal</td><td>Добавь 2 animals на любую карту</td><td><span class="badge badge-b">Payoff</span> Хорошо с scoring animals, иначе средне.</td></tr>
+<tr><td>10</td><td>&mdash;</td><td><span class="vp">2 VP</span> в конце игры</td><td><span class="badge badge-d">Race</span> Эксклюзивный слот, иногда блок.</td></tr>
+<tr><td>11</td><td>&mdash;</td><td><span class="vp">5 VP</span> в конце игры</td><td><span class="badge badge-a">Race</span> Главный late-game sprint.</td></tr>
+</table>
+
+<h2 id="meta">5. Мета: что меняется в оценке карт</h2>
+
+<h3>Energy production становится гибче</h3>
+<p>В обычной игре лишняя energy часто просто падает в heat. С Delta она становится action currency: можно добрать production, cards, Jovian tag, animals или VP. Это поднимает карты, которые дают раннюю energy production или дешёвую энергию, но только если они не ломают tempo.</p>
+
+<h3>Дешёвые теги и wild tags дорожают</h3>
+<p>Delta награждает не один большой payoff, а <strong>tag breadth</strong>. Одна дешёвая карта с нужным тегом может открыть следующий хороший landing. Wild tag особенно ценен как мост через отсутствующий Power/Science/Microbe/Jovian.</p>
+
+<h3>Лучшие практические остановки</h3>
+<ul>
+<li><strong>Power</strong>: ранняя production-остановка, которая может сама кормить следующие Delta действия.</li>
+<li><strong>Earth</strong>: +2 MC production рано часто лучше, чем быстрый sprint дальше.</li>
+<li><strong>Space</strong>: titanium production резко усиливает Space strategy.</li>
+<li><strong>Science</strong>: посмотреть 4 и оставить до 2 — сильная фильтрация руки без покупки лишних карт.</li>
+<li><strong>5 VP</strong>: сильная late-game цель, особенно если видишь, что соперник не может занять её раньше.</li>
+</ul>
+
+<h3>Ситуативные payoffs</h3>
+<p><strong>Plant</strong> хорош не из-за самого тега, а когда у тебя уже много plant tags. <strong>Microbe</strong> требует used blue action, которое реально стоит повторять. <strong>Jovian</strong> взлетает с Terraforming Ganymede, Water Import from Europa, Ganymede Colony и другими Jovian multipliers. <strong>Animal</strong> ценен, если есть scoring target вроде Fish, Birds, Livestock или похожая карта.</p>
+
+<div class="formula">
+<strong>Быстрая формула хода:</strong> landing reward + VP race value - energy opportunity cost - skipped reward value. Если энергия нужна на trade, oxygen/heat push или важное blue action, часто лучше подождать поколение.
+</div>
+
+<h2 id="timing">6. Тайминг и типичные ошибки</h2>
+
+<h3>Не прыгай автоматически на максимум</h3>
+<p>Максимальный legal jump не обязан быть лучшим. Самая частая ошибка — перепрыгнуть через Power/Earth/Space/Science ради позиции, где награда слабее текущего темпа.</p>
+
+<h3>Не покупай теги только ради Delta</h3>
+<p>Delta добавляет скрытую ценность тегам, но не делает плохую карту хорошей сама по себе. Нужен либо полезный card effect, либо дешёвая цена, либо точный bridge к сильной остановке.</p>
+
+<h3>Следи за VP race</h3>
+<p>Если кто-то уже стоит на 2 VP, другой игрок может перепрыгнуть на 5 VP, но должен заплатить достаточно energy. Поэтому late-game energy bank может быть угрозой: соперник не просто получает heat, он может украсть 5 VP.</p>
+
+<h3>Колонии меняют цену энергии</h3>
+<p>В Colonies energy часто нужна для trade payment. Delta конкурирует за тот же ресурс. Если трата 3 energy на трек лишает тебя Pluto/Luna/Triton trade, это может быть плохой обмен даже при красивой Delta-награде.</p>
+
+<h2 id="synergy">7. Синергии</h2>
+
+<div class="tip good">
+Delta Project не draft-pick: карта автоматическая и выдаётся всем игрокам при включённом expansion. Поэтому оценивай не саму карту в драфте, а то, как она меняет ценность энергии, тегов и late-game VP race.
+</div>
+
+<p><strong>Практические синергии:</strong> дешёвая energy access, Power tag, wild/tag fixing, ранний card draw и карты, которые дают несколько полезных тегов без потери tempo. Хорошие примеры направлений: Power Plant, Thorgate, Tycho Magnetics, Power Generation, Research Coordination.</p>
+
+<h2 id="sources">8. Источники</h2>
+
+<ul>
+<li><a href="https://terraformingmars.nl/delta-project/">Dutch Open Terraforming Mars — Delta Project</a>: официальная страница, правила и print-and-play.</li>
+<li><a href="https://github.com/terraforming-mars/terraforming-mars/wiki/Delta-Project">terraforming-mars wiki — Delta Project</a>: правила web-реализации, трек и compatibility notes.</li>
+<li>Локальная реализация сервера: <code>terraforming-mars/src/server/delta/DeltaProjectExpansion.ts</code> и <code>terraforming-mars/src/server/cards/delta/DeltaProject.ts</code>.</li>
+</ul>
+
+<footer>
+Terraforming Mars Tier List &mdash; Delta Project guide
+</footer>
+
+</div>
+</body>
+</html>

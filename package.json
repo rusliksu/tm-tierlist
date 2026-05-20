@@ -1,0 +1,19 @@
+{
+  "name": "tm-tierlist-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site-only repository for the Terraforming Mars tier list pages.",
+  "scripts": {
+    "site:check": "python tools/site/sync-site.py --check",
+    "site:sync": "python tools/site/sync-site.py",
+    "test:site": "npm run site:check && npm run test:tierlist-sprites && npm run test:tierlist-modals && npm run test:tierlist-builder-assets && npm run test:tierlist-builder && npm run test:tierlist-network",
+    "test:tierlist-sprites": "node tools/site/test-tierlist-sprite-cells.mjs",
+    "test:tierlist-modals": "node tools/site/test-tierlist-card-modals.mjs",
+    "test:tierlist-builder-assets": "python tools/site/test-builder-assets.py",
+    "test:tierlist-builder": "node tools/site/test-tierlist-builder.mjs",
+    "test:tierlist-network": "node tools/site/test-tierlist-network.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}

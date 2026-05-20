@@ -1,0 +1,114 @@
+# Dependencies and repos
+tm-repo/
+tm-upstream/
+card-images-repo/
+node_modules/
+package-lock.json
+__pycache__/
+*.pyc
+
+# Cache files
+data/cotd_cache.json
+
+# Large data files (optional - uncomment if repo should be lightweight)
+# data/cotd_posts.json
+# data/cotd_lookup.json
+
+# Environment
+.env
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Test files
+test_*.json
+scripts/_tmp_*.js
+scripts/test-manutech.js
+nul
+test-results/
+playwright-report/
+output/playwright/
+test-mars.js
+test-proxy.js
+test-extension.mjs
+test-midgame.mjs
+tm-test-*.png
+tm-mid-*.png
+data/test_*.png
+
+# Script logs
+scripts/*.log
+
+# Game monitor / advisor logs
+game-data/
+game-state.md
+game-advisor-errors.log
+
+# Claude Code
+.claude/
+
+# Temp batch files
+data/project_batch_*.json
+data/prelude_evaluations_N_Z_plus_A_M.json
+data/prelude_evaluations_missing.json
+data/project_evaluations_calibration.json
+
+# Temp working files
+temp_b64_*.txt
+temp_*.json
+data/evaluations.json.backup
+data/api_sample_response.json
+data/bga_*.txt
+
+# Game log raw data (keep games_db.json, ignore raw snapshots)
+data/game_logs/*.jsonl
+data/game_logs/player*.json
+data/game_logs/game_api_test.json
+data/game_logs/game_state.json
+data/game_logs/game_logs.json
+data/game_logs/gd8cc1bac3020_*.json
+data/game_logs/gd8cc1bac3020_*.txt
+data/game_logs/gd8cc1bac3020_*.md
+data/game_logs/analysis_*.json
+data/game_logs/tm-watch-*.json
+data/game_logs/tm-game-*.json
+
+# Discord bot token
+data/discord_token.txt
+
+# MCP
+.mcp.json
+mcp-server/
+
+# Game logs (individual)
+gamelog-*.json
+
+# Prompts
+tm-game-prompt.md
+
+# Misc
+output/tierlist_html.zip
+*all_images.txt
+
+# Broken path artifacts (Windows/Claude)
+C?UsersRuslan*
+UsersRuslan*
+tmp_locales/
+data/game_watch_log.jsonl
+ml_training_data.jsonl
+
+# Playwright MCP
+.playwright-mcp/
+
+# Generation errors
+data/gen_err.txt
