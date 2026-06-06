@@ -7,9 +7,9 @@ const outputDir = path.join(repoRoot, 'output', 'playwright');
 const builderUrl = process.env.BUILDER_URL || 'http://127.0.0.1:4173/tierlist-builder.html';
 const expectedVersionPart = 'uniform-3x4-480x640-q96-corpdom';
 const categories = [
-  ['corporations', 'Корпорации', '69'],
+  ['corporations', 'Корпорации', '68'],
   ['preludes', 'Прелюдии', '105'],
-  ['projects', 'Проекты', '716'],
+  ['projects', 'Проекты', '717'],
   ['ceos', 'CEO', '37'],
 ];
 
@@ -119,7 +119,7 @@ async function main() {
   await page.getByRole('button', {name: 'Прелюдии'}).click();
   await page.getByRole('button', {name: 'Delta Project'}).click();
   await page.getByRole('button', {name: 'Корпорации'}).click();
-  await page.waitForFunction(() => document.querySelector('#poolCount')?.textContent?.trim() === '69');
+  await page.waitForFunction(() => document.querySelector('#poolCount')?.textContent?.trim() === '68');
   const corporationExpansionLabels = await page.evaluate(() => [...document.querySelectorAll('#expansionChips .chip')].map((button) => button.textContent.trim()));
   if (corporationExpansionLabels.includes('Delta Project')) {
     throw new Error(`Delta Project filter should be hidden after switching to corporations: ${corporationExpansionLabels.join(', ')}`);
