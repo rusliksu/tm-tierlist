@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terraforming Mars Wiki — Tier List</title>
+<meta name="description" content="Terraforming Mars wiki layer for tier list reasoning, card context, synergies, colonies, and evidence reports.">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="icon" type="image/x-icon" href="../favicon.ico">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    min-height: 100vh;
+}
+
+.header {
+    background: #16213e;
+    padding: 32px 24px 26px;
+    border-bottom: 2px solid #0f3460;
+}
+
+.header-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.back-link {
+    color: #ff6f8d;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    color: #e94560;
+    font-size: 34px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #b8c0d4;
+    line-height: 1.55;
+    max-width: 820px;
+}
+
+.container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 34px 20px 48px;
+}
+
+.section {
+    margin-bottom: 34px;
+}
+
+.section h2 {
+    color: #e94560;
+    font-size: 22px;
+    margin-bottom: 14px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.panel {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    padding: 18px;
+}
+
+.panel h3 {
+    color: #fff;
+    font-size: 17px;
+    margin-bottom: 8px;
+}
+
+.panel p,
+.panel li {
+    color: #b8c0d4;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.panel ul {
+    padding-left: 18px;
+}
+
+.links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.link-btn {
+    display: inline-block;
+    color: #fff;
+    background: #0f3460;
+    border: 1px solid #25527a;
+    border-radius: 6px;
+    padding: 9px 12px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.link-btn:hover {
+    background: #143f6d;
+    border-color: #e94560;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #16213e;
+    min-width: 720px;
+}
+
+th,
+td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #0f3460;
+    text-align: left;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+th {
+    color: #fff;
+    background: #12203a;
+}
+
+td {
+    color: #b8c0d4;
+}
+
+td a {
+    color: #ff6f8d;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+.badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.badge {
+    background: #203456;
+    border: 1px solid #365985;
+    border-radius: 5px;
+    color: #d7deef;
+    font-size: 12px;
+    padding: 5px 8px;
+}
+
+.card-evidence-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 14px 0;
+}
+
+.card-evidence-input {
+    flex: 1 1 280px;
+    min-width: 0;
+    background: #101b31;
+    border: 1px solid #365985;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    padding: 10px 12px;
+}
+
+.card-evidence-input:focus {
+    border-color: #e94560;
+    outline: 0;
+}
+
+.card-evidence-button {
+    background: #0f3460;
+    border: 1px solid #365985;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 9px 12px;
+}
+
+.card-evidence-button:hover {
+    background: #143f6d;
+    border-color: #e94560;
+}
+
+.card-evidence-summary {
+    background: #12203a;
+    border: 1px solid #0f3460;
+    border-radius: 7px;
+    margin-top: 12px;
+    padding: 14px;
+}
+
+.card-evidence-summary h3 {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.card-evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.evidence-group {
+    background: #101b31;
+    border: 1px solid #243f66;
+    border-radius: 7px;
+    padding: 12px;
+}
+
+.evidence-group h4 {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.evidence-group a {
+    color: #ff6f8d;
+    display: block;
+    font-size: 13px;
+    line-height: 1.35;
+    margin-top: 8px;
+    text-decoration: none;
+}
+
+.evidence-group a:hover {
+    text-decoration: underline;
+}
+
+.sync-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.sync-stat {
+    background: #12203a;
+    border: 1px solid #0f3460;
+    border-radius: 7px;
+    padding: 12px;
+}
+
+.sync-stat .value {
+    display: block;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 3px;
+}
+
+.sync-stat .label {
+    color: #9ca9c4;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.report-list,
+.source-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.report-list li,
+.source-list li {
+    border-top: 1px solid #0f3460;
+    padding: 9px 0;
+}
+
+.report-list li:first-child,
+.source-list li:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.source-title {
+    color: #fff;
+    font-weight: 800;
+}
+
+.muted {
+    color: #8f9bb5;
+}
+
+.code-line {
+    font-family: Consolas, 'Liberation Mono', monospace;
+    font-size: 12px;
+    color: #d9e7ff;
+    background: #12203a;
+    border: 1px solid #0f3460;
+    border-radius: 5px;
+    padding: 8px 10px;
+    overflow-x: auto;
+}
+
+.rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.rating-score {
+    background: #bfff7f;
+    color: #101828;
+    border-radius: 5px;
+    padding: 5px 9px;
+    font-weight: 800;
+}
+
+.rating-tier {
+    color: #bfff7f;
+    font-weight: 800;
+}
+
+.footer {
+    text-align: center;
+    padding: 24px 20px;
+    color: #999;
+    font-size: 12px;
+    border-top: 1px solid #0f3460;
+}
+
+.footer a {
+    color: #ff5577;
+    text-decoration: none;
+}
+
+@media (max-width: 640px) {
+    h1 {
+        font-size: 27px;
+    }
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
+</style>
+</head>
+<body>
+<header class="header">
+    <div class="header-inner">
+        <a class="back-link" href="../index.html">← Tier List</a>
+        <h1>Terraforming Mars Wiki</h1>
+        <p class="subtitle">Рабочий слой знаний для tier list: контекст оценок, синергии, колонии, спорные карты и evidence-очереди. Факты карт должны приходить из canonical JSON, а длинные объяснения — из report/source материалов.</p>
+    </div>
+</header>
+
+<main class="container">
+    <section class="section" id="wiki-entry">
+        <h2>Быстрый вход</h2>
+        <div class="links">
+            <a class="link-btn" href="../output/tierlist_projects_ru.html">Проектные карты</a>
+            <a class="link-btn" href="../output/tierlist_corporations_ru.html">Корпорации</a>
+            <a class="link-btn" href="../output/tierlist_preludes_ru.html">Прелюдии</a>
+            <a class="link-btn" href="../strategy-guide.html">Базовая стратегия</a>
+            <a class="link-btn" href="../colonies-guide.html">Колонии</a>
+        </div>
+    </section>
+
+    <section class="section" id="automation">
+        <h2>Автосинхронизация</h2>
+        <div class="panel">
+            <h3>Живой индекс данных</h3>
+            <p>Этот блок строится из canonical ratings, advisor and smartbot reports, npm scripts и public-safe source metadata. Runtime logs и приватные данные партий сюда не встраиваются.</p>
+            <div class="badge-row">
+                <span class="badge">canonical data</span>
+                <span class="badge">advisor reports</span>
+                <span class="badge">smartbot reports</span>
+                <span class="badge">shared brain</span>
+                <span class="badge">site sync</span>
+            </div>
+            <div id="wikiSyncStatus" class="muted" style="margin-top:12px">Загрузка wiki-data.json...</div>
+            <div id="wikiSyncStats" class="sync-grid" style="margin-top:14px"></div>
+            <div class="code-line">npm run site:sync</div>
+        </div>
+    </section>
+
+    <section class="section" id="card-evidence">
+        <h2>Evidence по карте</h2>
+        <div class="panel">
+            <h3 id="cardEvidenceTitle">Card evidence</h3>
+            <div class="card-evidence-toolbar">
+                <input id="cardEvidenceSearch" class="card-evidence-input" list="cardEvidenceOptions" placeholder="Power Plant" autocomplete="off">
+                <datalist id="cardEvidenceOptions"></datalist>
+                <button type="button" class="card-evidence-button" id="cardEvidenceOpen">Открыть</button>
+            </div>
+            <div id="cardEvidenceQuick" class="badge-row"></div>
+            <div id="cardEvidenceDetails" class="card-evidence-summary muted">Загрузка card evidence...</div>
+        </div>
+    </section>
+
+    <section class="section" id="latest-source-reports">
+        <h2>Последние сигналы из advisor, smartbot и evidence</h2>
+        <div class="grid" id="wikiReportGroups">
+            <article class="panel">
+                <h3>Reports</h3>
+                <p class="muted">После сборки здесь появятся последние report-файлы по группам.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section" id="source-families">
+        <h2>Что синхронизируется</h2>
+        <div class="grid" id="wikiSourceFamilies">
+            <article class="panel">
+                <h3>Sources</h3>
+                <p class="muted">Builder покажет canonical data, advisor, smartbot, shared brain и site/wiki surface.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>Первый срез wiki</h2>
+        <div class="grid">
+            <article class="panel" id="cards">
+                <h3>Карты и оценки</h3>
+                <p>Страницы карт должны собираться из `card_index`, `all_cards` и `evaluations`: cost, tags, VP, tier, reasoning, timing profiles и source links.</p>
+            </article>
+            <article class="panel" id="tags">
+                <h3>Метки и синергии</h3>
+                <p>Практический слой над tag filters: когда метка меняет цену карты, какие якоря открывает, когда синергия становится ловушкой.</p>
+            </article>
+            <article class="panel" id="colonies">
+                <h3>Колонии</h3>
+                <p>Не список тайлов, а оценка trade tempo, lockout, extra fleet, Poseidon shell, energy windows и ценности конкретной colony row.</p>
+            </article>
+            <article class="panel" id="evidence">
+                <h3>Evidence</h3>
+                <p>COTD, SHOTW, Rune/BGA, TFMStats и runtime logs должны объяснять, почему рейтинг менялся, а не заменять оценку состояния партии.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section" id="promoted-reports">
+        <h2>Материалы, которые уже можно поднимать</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Wiki page</th>
+                        <th>Source</th>
+                        <th>Use in tierlist</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Strategy / Core Thinking</td>
+                        <td><code>tm_meta_vk_doc_our_setups_2026-06-01.html</code></td>
+                        <td>Общий контекст: фазы игры, ловушки, альтернативная стоимость, закрытие глобалок.</td>
+                    </tr>
+                    <tr>
+                        <td>Strategy / Combo Map</td>
+                        <td><code>tm_combo_map_2026-06-01.html</code></td>
+                        <td>Related links из card modal: якорные карты, недостающие детали, когда закрывать связку.</td>
+                    </tr>
+                    <tr>
+                        <td>Mechanics / Tags</td>
+                        <td><code>tm_tag_synergy_cheatsheet_2026-06-01.html</code></td>
+                        <td>Backlinks из tag filters и объяснение, почему tag меняет оценку карты.</td>
+                    </tr>
+                    <tr>
+                        <td>Mechanics / Colonies</td>
+                        <td><code>tm_colony_cards_cheatsheet_2026-06-01.html</code></td>
+                        <td>Context для Research Colony, Space Port Colony, Trading Colony, Poseidon и energy sinks.</td>
+                    </tr>
+                    <tr>
+                        <td>Strategy / Controversial Cards</td>
+                        <td><code>tm_controversial_cards_2026-06-02.html</code></td>
+                        <td>Лучший публичный раздел для объяснения context-dependent tiering.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="section" id="sterling-vents">
+        <h2>Первый карточный пример</h2>
+        <article class="panel">
+            <h3>Sterling Vents</h3>
+            <div class="rating">
+                <span class="rating-score">66</span>
+                <span class="rating-tier">Tier C</span>
+            </div>
+            <p>Дешёвый heat-to-energy converter, а не generic opener. Карта требует 2 heat production, даёт +2 energy production, Power + Building tags и 1 VP. Сильна с Colonies trade, AI Central, Physics Complex, Steelworks, Electro Catapult и похожими energy sinks.</p>
+            <div class="badge-row">
+                <span class="badge">needs 2 heat production</span>
+                <span class="badge">Power</span>
+                <span class="badge">Building</span>
+                <span class="badge">Promo X79</span>
+                <span class="badge">canonical-only evaluation</span>
+            </div>
+        </article>
+    </section>
+</main>
+
+<footer class="footer">
+    Terraforming Mars Tier List &mdash; <a href="https://github.com/rusliksu/tm-tierlist">github.com/rusliksu/tm-tierlist</a>
+</footer>
+<script>
+function escapeText(value) {
+    return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[ch]));
+}
+
+function statCard(value, label) {
+    return '<div class="sync-stat"><span class="value">' + escapeText(value) + '</span><span class="label">' + escapeText(label) + '</span></div>';
+}
+
+function reportList(group) {
+    const rows = (group.latest || []).slice(0, 5).map(item => (
+        '<li><strong>' + escapeText(item.title) + '</strong><br><span class="muted">' +
+        escapeText(item.path) + '</span></li>'
+    )).join('');
+    return '<article class="panel"><h3>' + escapeText(group.title) + '</h3><p>' + escapeText(group.description) +
+        '</p><ul class="report-list">' + (rows || '<li class="muted">Нет report-файлов</li>') + '</ul></article>';
+}
+
+function sourceFamilyPanel(family) {
+    const scripts = (family.npmScripts || []).slice(0, 8).map(name => '<span class="badge">' + escapeText(name) + '</span>').join('');
+    const files = (family.files || []).filter(item => item.exists).slice(0, 5).map(item => (
+        '<li><span class="muted">' + escapeText(item.path) + '</span></li>'
+    )).join('');
+    return '<article class="panel"><h3>' + escapeText(family.title) + '</h3><p>' + escapeText(family.description) +
+        '</p><p><span class="source-title">' + escapeText(family.existingFiles) + '</span> source files tracked</p>' +
+        '<ul class="source-list">' + files + '</ul><div class="badge-row">' + scripts + '</div></article>';
+}
+
+function reportHref(item) {
+    const path = String(item.path || '');
+    if (!path) return '#';
+    return '../' + path.split('/').map(encodeURIComponent).join('/');
+}
+
+function evidenceGroupTitles(data) {
+    const groups = {};
+    for (const group of ((data.reportStats || {}).groups || [])) {
+        groups[group.id] = group.title || group.id;
+    }
+    return groups;
+}
+
+function selectedCardFromUrl(data) {
+    const cardName = new URLSearchParams(window.location.search).get('card');
+    if (cardName && (data.cardEvidence || {})[cardName]) return cardName;
+    return ((data.cardEvidenceStats || {}).topCards || [])[0]?.name || Object.keys(data.cardEvidence || {})[0] || '';
+}
+
+function renderCardEvidence(cardName, data) {
+    const evidence = (data.cardEvidence || {})[cardName];
+    const titleEl = document.getElementById('cardEvidenceTitle');
+    const detailsEl = document.getElementById('cardEvidenceDetails');
+    if (!evidence) {
+        titleEl.textContent = cardName || 'Card evidence';
+        detailsEl.className = 'card-evidence-summary muted';
+        detailsEl.textContent = cardName ? 'Indexed evidence не найден.' : 'Card evidence не найден.';
+        return;
+    }
+    const groupTitles = evidenceGroupTitles(data);
+    const groupOrder = ['guides', 'advisor', 'smartbot', 'externalEvidence'];
+    const groupCards = groupOrder
+        .filter(groupId => evidence.groups && evidence.groups[groupId])
+        .map(groupId => {
+            const group = evidence.groups[groupId];
+            const links = (group.latest || []).map(item => (
+                '<a href="' + escapeText(reportHref(item)) + '">' + escapeText(item.title || item.path) +
+                '<br><span class="muted">' + escapeText(item.path || '') + '</span></a>'
+            )).join('');
+            return '<div class="evidence-group"><h4>' + escapeText(groupTitles[groupId] || groupId) +
+                ' · ' + escapeText(group.count || 0) + '</h4>' +
+                (links || '<span class="muted">Report metadata unavailable</span>') + '</div>';
+        })
+        .join('');
+    titleEl.textContent = evidence.name || cardName;
+    detailsEl.className = 'card-evidence-summary';
+    detailsEl.innerHTML = '<h3>' + escapeText(evidence.name || cardName) + '</h3>' +
+        '<div class="badge-row"><span class="badge">Score ' + escapeText(evidence.score) + '</span>' +
+        '<span class="badge">Tier ' + escapeText(evidence.tier) + '</span>' +
+        '<span class="badge">' + escapeText(evidence.totalReports || 0) + ' reports</span></div>' +
+        '<div class="card-evidence-grid">' + groupCards + '</div>';
+}
+
+function setCardEvidenceSelection(cardName, data, updateUrl) {
+    const input = document.getElementById('cardEvidenceSearch');
+    input.value = cardName || '';
+    renderCardEvidence(cardName, data);
+    if (updateUrl && cardName) {
+        history.replaceState(null, '', '?card=' + encodeURIComponent(cardName) + '#card-evidence');
+    }
+}
+
+function setupCardEvidence(data) {
+    const cardEvidence = data.cardEvidence || {};
+    const cards = Object.keys(cardEvidence).sort((a, b) => a.localeCompare(b));
+    const optionsEl = document.getElementById('cardEvidenceOptions');
+    const quickEl = document.getElementById('cardEvidenceQuick');
+    const inputEl = document.getElementById('cardEvidenceSearch');
+    optionsEl.innerHTML = cards.map(name => '<option value="' + escapeText(name) + '"></option>').join('');
+    quickEl.innerHTML = ((data.cardEvidenceStats || {}).topCards || []).slice(0, 8).map(item => (
+        '<button type="button" class="card-evidence-button" data-card="' + escapeText(item.name) + '">' +
+        escapeText(item.name) + ' · ' + escapeText(item.totalReports) + '</button>'
+    )).join('');
+
+    const openSelected = () => {
+        const exact = cards.find(name => name.toLowerCase() === inputEl.value.trim().toLowerCase()) || inputEl.value.trim();
+        setCardEvidenceSelection(exact, data, true);
+    };
+    document.getElementById('cardEvidenceOpen').addEventListener('click', openSelected);
+    inputEl.addEventListener('change', openSelected);
+    quickEl.querySelectorAll('[data-card]').forEach(button => {
+        button.addEventListener('click', () => setCardEvidenceSelection(button.getAttribute('data-card'), data, true));
+    });
+    setCardEvidenceSelection(selectedCardFromUrl(data), data, false);
+}
+
+fetch('wiki-data.json')
+    .then(response => {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+    })
+    .then(data => {
+        const stats = data.evaluationStats || {};
+        const reports = data.reportStats || {};
+        const automation = data.automation || {};
+        const cardCount = stats.cards || Object.keys(data.cards || {}).length;
+        document.getElementById('wikiSyncStatus').textContent =
+            'Синхронизировано из ' + escapeText(data.generatedBy || 'wiki builder') +
+            ' | schema v' + escapeText(data.schemaVersion || '?') +
+            ' | privacy: ' + escapeText(automation.privacyMode || 'public-safe') +
+            ' | source max mtime: ' + escapeText(data.sourceMaxMtime || 'unknown');
+        document.getElementById('wikiSyncStats').innerHTML = [
+            statCard(cardCount, 'cards in wiki card index'),
+            statCard(stats.timingProfileCards || 0, 'cards with timing profiles'),
+            statCard(stats.cotdLinkedCards || 0, 'cards with COTD links'),
+            statCard(reports.totalReports || 0, 'report files indexed'),
+            statCard((data.sourceFiles || []).length, 'public-safe source files'),
+            statCard(automation.advisorTests || 0, 'advisor regression files'),
+            statCard(automation.smartbotTests || 0, 'smartbot regression files')
+        ].join('');
+        document.getElementById('wikiReportGroups').innerHTML = (reports.groups || []).map(reportList).join('');
+        document.getElementById('wikiSourceFamilies').innerHTML = (data.sourceFamilies || []).map(sourceFamilyPanel).join('');
+        setupCardEvidence(data);
+    })
+    .catch(err => {
+        document.getElementById('wikiSyncStatus').textContent = 'wiki-data.json не загрузился: ' + err.message;
+    });
+</script>
+</body>
+</html>
