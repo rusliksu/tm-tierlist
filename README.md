@@ -2,7 +2,9 @@
 
 Site-only repository for the public Terraforming Mars tier list pages.
 
-**Live site:** [rusliksu.github.io/tm-tierlist](https://rusliksu.github.io/tm-tierlist/)
+**Primary live site:** [tm.knightbyte.win/tierlist](https://tm.knightbyte.win/tierlist/)
+
+**Legacy GitHub Pages URL:** [rusliksu.github.io/tm-tierlist](https://rusliksu.github.io/tm-tierlist/)
 
 This repo intentionally contains only the GitHub Pages surface:
 
@@ -18,7 +20,8 @@ smartbot runtime, canonical card data, or shared brain packages.
 
 - canonical site source lives in `apps/tm-site/src/`
 - publish files live at the repo root and under `output/`
-- GitHub Pages publishes the live site from branch `main`
+- GitHub Pages publishes the legacy URL from branch `main`
+- `tm.knightbyte.win/tierlist/` is a VPS static mirror of the same publish files
 - `tools/site/sync-site.py` checks and syncs canonical source to publish paths
 - `tools/site/test-tierlist-network.mjs` verifies local page asset requests
 
@@ -80,7 +83,7 @@ tm-tierlist/
 
 - Keep site source changes in `apps/tm-site/src/`.
 - Run `npm run test:site` before pushing.
-- Use `main` for the live GitHub Pages site.
+- Use `main` for the GitHub Pages source and the `tm.knightbyte.win/tierlist/` mirror.
 - Keep advisor, extension, smartbot, and data changes in their own repos.
 
 ## License
