@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedBy": "tools/site/build-wiki-data.js",
-  "sourceMaxMtime": "2026-06-06T13:21:23.308Z",
+  "sourceMaxMtime": "2026-06-06T14:01:45.202Z",
   "sourceFiles": [
     {
       "path": "apps/tm-advisor-py/entrypoints/advisor_snapshot.py",
@@ -17,8 +17,8 @@
     },
     {
       "path": "apps/tm-site/src/wiki/index.html",
-      "bytes": 22933,
-      "modified": "2026-06-06T13:15:48.608Z",
+      "bytes": 25346,
+      "modified": "2026-06-06T14:01:45.203Z",
       "publicSafe": true
     },
     {
@@ -25777,8 +25777,8 @@
         {
           "path": "apps/tm-site/src/wiki/index.html",
           "exists": true,
-          "bytes": 22933,
-          "modified": "2026-06-06T13:15:48.608Z",
+          "bytes": 25346,
+          "modified": "2026-06-06T14:01:45.203Z",
           "publicSafe": true
         },
         {

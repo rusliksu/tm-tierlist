@@ -256,17 +256,53 @@ td a:hover {
     margin-bottom: 8px;
 }
 
-.evidence-group a {
-    color: #ff6f8d;
+.report-button,
+.evidence-source-button {
+    width: 100%;
+    background: #132947;
+    border: 1px solid #315783;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
     display: block;
-    font-size: 13px;
-    line-height: 1.35;
+    font: inherit;
     margin-top: 8px;
-    text-decoration: none;
+    padding: 10px 12px;
+    text-align: left;
 }
 
-.evidence-group a:hover {
-    text-decoration: underline;
+.report-button:hover,
+.evidence-source-button:hover {
+    background: #17365d;
+    border-color: #e94560;
+}
+
+.report-button strong,
+.evidence-source-button strong {
+    display: block;
+    color: #ff6f8d;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.report-button span,
+.evidence-source-button span {
+    display: block;
+    color: #9ca9c4;
+    font-size: 12px;
+    line-height: 1.35;
+    margin-top: 4px;
+}
+
+.source-note {
+    background: #0f1f38;
+    border: 1px solid #294b73;
+    border-radius: 6px;
+    color: #b8c0d4;
+    font-size: 13px;
+    line-height: 1.45;
+    margin-top: 10px;
+    padding: 10px 12px;
 }
 
 .sync-grid {
@@ -335,6 +371,10 @@ td a:hover {
     overflow-x: auto;
 }
 
+.technical-section[hidden] {
+    display: none;
+}
+
 .rating {
     display: inline-flex;
     align-items: center;
@@ -384,7 +424,7 @@ td a:hover {
     <div class="header-inner">
         <a class="back-link" href="../index.html">← Tier List</a>
         <h1>Terraforming Mars Wiki</h1>
-        <p class="subtitle">Рабочий слой знаний для tier list: контекст оценок, синергии, колонии, спорные карты и evidence-очереди. Факты карт должны приходить из canonical JSON, а длинные объяснения — из report/source материалов.</p>
+        <p class="subtitle">Короткая навигация по оценкам карт: где карта сильна, какие связки ей нужны и какие материалы уже подтверждают текущий tier.</p>
     </div>
 </header>
 
@@ -401,53 +441,52 @@ td a:hover {
     </section>
 
     <section class="section" id="automation">
-        <h2>Автосинхронизация</h2>
+        <h2>Что уже собрано</h2>
         <div class="panel">
-            <h3>Живой индекс данных</h3>
-            <p>Этот блок строится из canonical ratings, advisor and smartbot reports, npm scripts и public-safe source metadata. Runtime logs и приватные данные партий сюда не встраиваются.</p>
+            <h3>Индекс оценок и источников</h3>
+            <p>Здесь видны карты, по которым уже есть пояснения, спорные места, сигналы из партий и внешние обсуждения. Приватные руки, драфты и сырые логи партий не публикуются.</p>
             <div class="badge-row">
-                <span class="badge">canonical data</span>
-                <span class="badge">advisor reports</span>
-                <span class="badge">smartbot reports</span>
-                <span class="badge">shared brain</span>
-                <span class="badge">site sync</span>
+                <span class="badge">оценки карт</span>
+                <span class="badge">гайды</span>
+                <span class="badge">разборы партий</span>
+                <span class="badge">внешние обсуждения</span>
+                <span class="badge">без приватных логов</span>
             </div>
             <div id="wikiSyncStatus" class="muted" style="margin-top:12px">Загрузка wiki-data.json...</div>
             <div id="wikiSyncStats" class="sync-grid" style="margin-top:14px"></div>
-            <div class="code-line">npm run site:sync</div>
         </div>
     </section>
 
     <section class="section" id="card-evidence">
-        <h2>Evidence по карте</h2>
+        <h2>Источники по карте</h2>
         <div class="panel">
-            <h3 id="cardEvidenceTitle">Card evidence</h3>
+            <h3 id="cardEvidenceTitle">Источники по карте</h3>
             <div class="card-evidence-toolbar">
                 <input id="cardEvidenceSearch" class="card-evidence-input" list="cardEvidenceOptions" placeholder="Power Plant" autocomplete="off">
                 <datalist id="cardEvidenceOptions"></datalist>
                 <button type="button" class="card-evidence-button" id="cardEvidenceOpen">Открыть</button>
             </div>
             <div id="cardEvidenceQuick" class="badge-row"></div>
-            <div id="cardEvidenceDetails" class="card-evidence-summary muted">Загрузка card evidence...</div>
+            <div id="cardEvidenceDetails" class="card-evidence-summary muted">Загрузка источников...</div>
         </div>
     </section>
 
     <section class="section" id="latest-source-reports">
-        <h2>Последние сигналы из advisor, smartbot и evidence</h2>
+        <h2>Свежие материалы</h2>
         <div class="grid" id="wikiReportGroups">
             <article class="panel">
-                <h3>Reports</h3>
-                <p class="muted">После сборки здесь появятся последние report-файлы по группам.</p>
+                <h3>Материалы</h3>
+                <p class="muted">Здесь появятся свежие гайды, разборы и внешние источники.</p>
             </article>
         </div>
     </section>
 
-    <section class="section" id="source-families">
-        <h2>Что синхронизируется</h2>
+    <section class="section technical-section" id="source-families" hidden>
+        <h2>Техническая диагностика</h2>
         <div class="grid" id="wikiSourceFamilies">
             <article class="panel">
                 <h3>Sources</h3>
-                <p class="muted">Builder покажет canonical data, advisor, smartbot, shared brain и site/wiki surface.</p>
+                <p class="muted">Этот блок показывается только с параметром <code>?debug=1</code>.</p>
             </article>
         </div>
     </section>
@@ -457,11 +496,11 @@ td a:hover {
         <div class="grid">
             <article class="panel" id="cards">
                 <h3>Карты и оценки</h3>
-                <p>Страницы карт должны собираться из `card_index`, `all_cards` и `evaluations`: cost, tags, VP, tier, reasoning, timing profiles и source links.</p>
+                <p>На карточной странице должны быть стоимость, теги, очки, текущий tier и короткое объяснение, когда карта хороша.</p>
             </article>
             <article class="panel" id="tags">
                 <h3>Метки и синергии</h3>
-                <p>Практический слой над tag filters: когда метка меняет цену карты, какие якоря открывает, когда синергия становится ловушкой.</p>
+                <p>Не просто фильтр по тегам, а объяснение: когда метка реально повышает ценность карты, а когда это ловушка.</p>
             </article>
             <article class="panel" id="colonies">
                 <h3>Колонии</h3>
@@ -469,7 +508,7 @@ td a:hover {
             </article>
             <article class="panel" id="evidence">
                 <h3>Evidence</h3>
-                <p>COTD, SHOTW, Rune/BGA, TFMStats и runtime logs должны объяснять, почему рейтинг менялся, а не заменять оценку состояния партии.</p>
+                <p>Обсуждения, статистика и разборы партий должны объяснять, почему рейтинг менялся, а не заменять оценку конкретной позиции.</p>
             </article>
         </div>
     </section>
@@ -480,36 +519,36 @@ td a:hover {
             <table>
                 <thead>
                     <tr>
-                        <th>Wiki page</th>
-                        <th>Source</th>
-                        <th>Use in tierlist</th>
+                        <th>Раздел</th>
+                        <th>Что даст</th>
+                        <th>Где будет видно</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Strategy / Core Thinking</td>
-                        <td><code>tm_meta_vk_doc_our_setups_2026-06-01.html</code></td>
-                        <td>Общий контекст: фазы игры, ловушки, альтернативная стоимость, закрытие глобалок.</td>
+                        <td>Базовое мышление</td>
+                        <td>Фазы игры, ловушки, альтернативная стоимость, закрытие глобалок.</td>
+                        <td>В карточках и гайдах по стратегии.</td>
                     </tr>
                     <tr>
-                        <td>Strategy / Combo Map</td>
-                        <td><code>tm_combo_map_2026-06-01.html</code></td>
-                        <td>Related links из card modal: якорные карты, недостающие детали, когда закрывать связку.</td>
+                        <td>Карта комбо</td>
+                        <td>Якорные карты, недостающие детали, когда закрывать связку.</td>
+                        <td>В источниках и связанных картах.</td>
                     </tr>
                     <tr>
-                        <td>Mechanics / Tags</td>
-                        <td><code>tm_tag_synergy_cheatsheet_2026-06-01.html</code></td>
-                        <td>Backlinks из tag filters и объяснение, почему tag меняет оценку карты.</td>
+                        <td>Теги и синергии</td>
+                        <td>Почему тег иногда стоит денег, а иногда только выглядит полезным.</td>
+                        <td>В tag filters и карточных страницах.</td>
                     </tr>
                     <tr>
-                        <td>Mechanics / Colonies</td>
-                        <td><code>tm_colony_cards_cheatsheet_2026-06-01.html</code></td>
-                        <td>Context для Research Colony, Space Port Colony, Trading Colony, Poseidon и energy sinks.</td>
+                        <td>Колонии</td>
+                        <td>Trade tempo, extra fleet, Poseidon и energy sinks.</td>
+                        <td>В картах и гайде по колониям.</td>
                     </tr>
                     <tr>
-                        <td>Strategy / Controversial Cards</td>
-                        <td><code>tm_controversial_cards_2026-06-02.html</code></td>
-                        <td>Лучший публичный раздел для объяснения context-dependent tiering.</td>
+                        <td>Спорные карты</td>
+                        <td>Почему некоторые карты нельзя оценивать одним числом без контекста.</td>
+                        <td>В карточках с сильной зависимостью от стола.</td>
                     </tr>
                 </tbody>
             </table>
@@ -526,11 +565,11 @@ td a:hover {
             </div>
             <p>Дешёвый heat-to-energy converter, а не generic opener. Карта требует 2 heat production, даёт +2 energy production, Power + Building tags и 1 VP. Сильна с Colonies trade, AI Central, Physics Complex, Steelworks, Electro Catapult и похожими energy sinks.</p>
             <div class="badge-row">
-                <span class="badge">needs 2 heat production</span>
+                <span class="badge">нужно 2 heat production</span>
                 <span class="badge">Power</span>
                 <span class="badge">Building</span>
                 <span class="badge">Promo X79</span>
-                <span class="badge">canonical-only evaluation</span>
+                <span class="badge">первичная оценка</span>
             </div>
         </article>
     </section>
@@ -556,11 +595,13 @@ function statCard(value, label) {
 
 function reportList(group) {
     const rows = (group.latest || []).slice(0, 5).map(item => (
-        '<li><strong>' + escapeText(item.title) + '</strong><br><span class="muted">' +
-        escapeText(item.path) + '</span></li>'
+        '<li><button type="button" class="report-button" data-source-title="' + escapeText(item.title || item.path) + '">' +
+        '<strong>' + escapeText(item.title || item.path) + '</strong>' +
+        '<span>Нажмите, чтобы посмотреть статус публикации</span></button></li>'
     )).join('');
     return '<article class="panel"><h3>' + escapeText(group.title) + '</h3><p>' + escapeText(group.description) +
-        '</p><ul class="report-list">' + (rows || '<li class="muted">Нет report-файлов</li>') + '</ul></article>';
+        '</p><ul class="report-list">' + (rows || '<li class="muted">Нет report-файлов</li>') +
+        '</ul><div class="source-note-target"></div></article>';
 }
 
 function sourceFamilyPanel(family) {
@@ -577,6 +618,11 @@ function reportHref(item) {
     const path = String(item.path || '');
     if (!path) return '#';
     return '../' + path.split('/').map(encodeURIComponent).join('/');
+}
+
+function publicSourceMessage(title) {
+    return '<div class="source-note"><strong>' + escapeText(title || 'Материал') + '</strong><br>' +
+        'Полный текст этого материала пока не опубликован как отдельная публичная страница. В wiki уже используется только безопасная метка источника: название, группа и счетчик упоминаний.</div>';
 }
 
 function evidenceGroupTitles(data) {
@@ -610,12 +656,13 @@ function renderCardEvidence(cardName, data) {
         .map(groupId => {
             const group = evidence.groups[groupId];
             const links = (group.latest || []).map(item => (
-                '<a href="' + escapeText(reportHref(item)) + '">' + escapeText(item.title || item.path) +
-                '<br><span class="muted">' + escapeText(item.path || '') + '</span></a>'
+                '<button type="button" class="evidence-source-button" data-source-title="' + escapeText(item.title || item.path) + '">' +
+                '<strong>' + escapeText(item.title || item.path) + '</strong>' +
+                '<span>Источник учтен в оценке; полный текст пройдет публичную вычитку отдельно</span></button>'
             )).join('');
             return '<div class="evidence-group"><h4>' + escapeText(groupTitles[groupId] || groupId) +
                 ' · ' + escapeText(group.count || 0) + '</h4>' +
-                (links || '<span class="muted">Report metadata unavailable</span>') + '</div>';
+                (links || '<span class="muted">Материалов пока нет</span>') + '<div class="source-note-target"></div></div>';
         })
         .join('');
     titleEl.textContent = evidence.name || cardName;
@@ -623,7 +670,7 @@ function renderCardEvidence(cardName, data) {
     detailsEl.innerHTML = '<h3>' + escapeText(evidence.name || cardName) + '</h3>' +
         '<div class="badge-row"><span class="badge">Score ' + escapeText(evidence.score) + '</span>' +
         '<span class="badge">Tier ' + escapeText(evidence.tier) + '</span>' +
-        '<span class="badge">' + escapeText(evidence.totalReports || 0) + ' reports</span></div>' +
+        '<span class="badge">' + escapeText(evidence.totalReports || 0) + ' источников</span></div>' +
         '<div class="card-evidence-grid">' + groupCards + '</div>';
 }
 
@@ -671,26 +718,38 @@ fetch('wiki-data.json')
         const automation = data.automation || {};
         const cardCount = stats.cards || Object.keys(data.cards || {}).length;
         document.getElementById('wikiSyncStatus').textContent =
-            'Синхронизировано из ' + escapeText(data.generatedBy || 'wiki builder') +
-            ' | schema v' + escapeText(data.schemaVersion || '?') +
-            ' | privacy: ' + escapeText(automation.privacyMode || 'public-safe') +
-            ' | source max mtime: ' + escapeText(data.sourceMaxMtime || 'unknown');
+            'Индекс загружен. Публично показываются только безопасные названия, группы и счетчики источников.';
         document.getElementById('wikiSyncStats').innerHTML = [
-            statCard(cardCount, 'cards in wiki card index'),
-            statCard(stats.timingProfileCards || 0, 'cards with timing profiles'),
-            statCard(stats.cotdLinkedCards || 0, 'cards with COTD links'),
-            statCard(reports.totalReports || 0, 'report files indexed'),
-            statCard((data.sourceFiles || []).length, 'public-safe source files'),
-            statCard(automation.advisorTests || 0, 'advisor regression files'),
-            statCard(automation.smartbotTests || 0, 'smartbot regression files')
+            statCard(cardCount, 'карт в индексе'),
+            statCard((data.cardEvidenceStats || {}).cardsWithEvidence || 0, 'карт с источниками'),
+            statCard(reports.totalReports || 0, 'материалов учтено'),
+            statCard(stats.cotdLinkedCards || 0, 'карт с COTD'),
+            statCard(stats.timingProfileCards || 0, 'карт с timing-профилем')
         ].join('');
         document.getElementById('wikiReportGroups').innerHTML = (reports.groups || []).map(reportList).join('');
-        document.getElementById('wikiSourceFamilies').innerHTML = (data.sourceFamilies || []).map(sourceFamilyPanel).join('');
+        if (new URLSearchParams(window.location.search).get('debug') === '1') {
+            document.getElementById('source-families').hidden = false;
+            document.getElementById('wikiSourceFamilies').innerHTML =
+                '<article class="panel"><h3>Build</h3><p class="muted">' +
+                escapeText(data.generatedBy || 'wiki builder') + ' · schema v' +
+                escapeText(data.schemaVersion || '?') + ' · ' +
+                escapeText(data.sourceMaxMtime || 'unknown') + '</p></article>' +
+                (data.sourceFamilies || []).map(sourceFamilyPanel).join('');
+        }
         setupCardEvidence(data);
     })
     .catch(err => {
         document.getElementById('wikiSyncStatus').textContent = 'wiki-data.json не загрузился: ' + err.message;
     });
+
+document.addEventListener('click', event => {
+    const button = event.target.closest('.report-button, .evidence-source-button');
+    if (!button) return;
+    const target = button.closest('.evidence-group, .panel')?.querySelector('.source-note-target');
+    if (target) {
+        target.innerHTML = publicSourceMessage(button.getAttribute('data-source-title'));
+    }
+});
 </script>
 </body>
 </html>
