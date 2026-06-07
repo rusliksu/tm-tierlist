@@ -494,6 +494,7 @@ td a:hover {
             <a class="link-btn" href="../output/tierlist_projects_ru.html">Проектные карты</a>
             <a class="link-btn" href="../output/tierlist_corporations_ru.html">Корпорации</a>
             <a class="link-btn" href="../output/tierlist_preludes_ru.html">Прелюдии</a>
+            <a class="link-btn" href="../meta-thinking-guide.html">Правильное мышление</a>
             <a class="link-btn" href="../strategy-guide.html">Базовая стратегия</a>
             <a class="link-btn" href="../colonies-guide.html">Колонии</a>
         </div>
@@ -502,6 +503,10 @@ td a:hover {
     <section class="section" id="guides">
         <h2>Гайды</h2>
         <div class="grid">
+            <a class="panel guide-link" id="guide-meta-thinking" href="../meta-thinking-guide.html">
+                <h3>Правильное мышление</h3>
+                <p>Как оценивать ход через состояние партии: время, деньги, альтернативы, гонки и контроль конца игры.</p>
+            </a>
             <a class="panel guide-link" id="guide-strategy" href="../strategy-guide.html">
                 <h3>Базовая стратегия</h3>
                 <p>Движок, оценка карт, драфт, темп, комбо и типичные ошибки.</p>
@@ -722,9 +727,9 @@ function sourceFamilyPanel(family) {
 const PUBLIC_GUIDE_LINKS = [
     {
         match: /tm_meta|wiki_seed|full_pack|thinking|strategy/i,
-        href: '../strategy-guide.html',
-        title: 'Базовая стратегия',
-        note: 'Публичный гайд по мышлению, темпу и оценке карт'
+        href: '../meta-thinking-guide.html',
+        title: 'Правильное мышление',
+        note: 'Публичный гайд по времени, альтернативам, гонкам и контролю конца игры'
     },
     {
         match: /colony/i,

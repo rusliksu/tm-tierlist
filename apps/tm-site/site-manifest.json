@@ -2,6 +2,7 @@
   "source_root": "apps/tm-site/src",
   "root_files": [
     "index.html",
+    "meta-thinking-guide.html",
     "tierlist-builder.html",
     "tierlist-builder-assets.js",
     "crisis-rules.html",
@@ -16,6 +17,7 @@
     "delta-project-guide.html",
     "wiki/index.html",
     "wiki/wiki-data.json",
+    "reports/tm_meta_vk_doc_our_setups_2026-06-01.pdf",
     "favicon.ico",
     "favicon.png",
     "og-image.png"
