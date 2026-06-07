@@ -85,6 +85,18 @@ h1 {
     padding: 18px;
 }
 
+.guide-link {
+    color: inherit;
+    display: block;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.guide-link:hover {
+    border-color: #e94560;
+    transform: translateY(-2px);
+}
+
 .panel h3 {
     color: #fff;
     font-size: 17px;
@@ -432,11 +444,58 @@ td a:hover {
     <section class="section" id="wiki-entry">
         <h2>Быстрый вход</h2>
         <div class="links">
+            <a class="link-btn" href="#guides">Все гайды</a>
             <a class="link-btn" href="../output/tierlist_projects_ru.html">Проектные карты</a>
             <a class="link-btn" href="../output/tierlist_corporations_ru.html">Корпорации</a>
             <a class="link-btn" href="../output/tierlist_preludes_ru.html">Прелюдии</a>
             <a class="link-btn" href="../strategy-guide.html">Базовая стратегия</a>
             <a class="link-btn" href="../colonies-guide.html">Колонии</a>
+        </div>
+    </section>
+
+    <section class="section" id="guides">
+        <h2>Гайды</h2>
+        <div class="grid">
+            <a class="panel guide-link" id="guide-strategy" href="../strategy-guide.html">
+                <h3>Базовая стратегия</h3>
+                <p>Движок, оценка карт, драфт, темп, комбо и типичные ошибки.</p>
+            </a>
+            <a class="panel guide-link" id="guide-crisis" href="../crisis-rules.html">
+                <h3>Правила кризисов</h3>
+                <p>Короткая выжимка по Turmoil: Solar Phase, делегаты, influence и события.</p>
+            </a>
+            <a class="panel guide-link" id="guide-turmoil" href="../turmoil-guide.html">
+                <h3>Turmoil</h3>
+                <p>Партии, делегаты, события и политическая тактика.</p>
+            </a>
+            <a class="panel guide-link" id="guide-colonies" href="../colonies-guide.html">
+                <h3>Колонии</h3>
+                <p>Все колонии, торговля, флот, lockout и ключевые синергии.</p>
+            </a>
+            <a class="panel guide-link" id="guide-maps" href="../maps-guide.html">
+                <h3>Карты</h3>
+                <p>Tharsis, Hellas, Elysium: тайлы, майлстоуны, награды и блоки.</p>
+            </a>
+            <a class="panel guide-link" id="guide-venus" href="../venus-guide.html">
+                <h3>Venus Next</h3>
+                <p>Шкала Венеры, флоатеры, корпорации и ловушки дополнения.</p>
+            </a>
+            <a class="panel guide-link" id="guide-prelude" href="../prelude-guide.html">
+                <h3>Прелюдии</h3>
+                <p>Драфт, стартовый темп и синергии с корпорациями.</p>
+            </a>
+            <a class="panel guide-link" id="guide-ceo" href="../ceo-guide.html">
+                <h3>CEO</h3>
+                <p>Рейтинг CEO, тайминг OPG и лучшие связки.</p>
+            </a>
+            <a class="panel guide-link" id="guide-pathfinders" href="../pathfinders-guide.html">
+                <h3>Pathfinders</h3>
+                <p>Планетарные треки, корпорации, прелюдии и тэговые стратегии.</p>
+            </a>
+            <a class="panel guide-link" id="guide-delta" href="../delta-project-guide.html">
+                <h3>Delta Project</h3>
+                <p>Правила фан-дополнения, трек наград и energy/tag решения.</p>
+            </a>
         </div>
     </section>
 
