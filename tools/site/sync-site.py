@@ -8,10 +8,25 @@ from __future__ import annotations
 
 import argparse
 import filecmp
+from html.parser import HTMLParser
 import json
+import posixpath
 import re
 import shutil
 from pathlib import Path
+from urllib.parse import unquote, urlparse
+
+
+class LinkHrefParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.hrefs: list[tuple[int, str]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        for name, value in attrs:
+            if name.lower() == "href" and value:
+                line, _ = self.getpos()
+                self.hrefs.append((line, value))
 
 
 def load_manifest(repo_root: Path) -> dict:
@@ -63,6 +78,45 @@ def check_guide_links(source_root: Path, guide_files: list[Path]) -> bool:
     return ok
 
 
+def normalize_publish_path(page: Path, href: str) -> Path | None:
+    parsed = urlparse(href)
+    if parsed.scheme or parsed.netloc:
+        return None
+    if href.startswith(("#", "mailto:", "tel:", "javascript:")):
+        return None
+
+    raw_path = unquote(parsed.path)
+    if raw_path in ("", "."):
+        return None
+    if raw_path.startswith("/"):
+        target = raw_path.lstrip("/")
+    else:
+        base = page.parent.as_posix()
+        target = raw_path if base == "." else f"{base}/{raw_path}"
+
+    normalized = posixpath.normpath(target)
+    if normalized in ("", ".") or normalized.startswith("../") or normalized == "..":
+        return None
+    return Path(*normalized.split("/"))
+
+
+def check_internal_links(source_root: Path, publish_paths: set[Path], html_files: list[Path]) -> bool:
+    ok = True
+    for rel in html_files:
+        page = source_root / rel
+        ensure_exists(page)
+        parser = LinkHrefParser()
+        parser.feed(page.read_text(encoding="utf-8"))
+        for line, href in parser.hrefs:
+            target = normalize_publish_path(rel, href)
+            if target is None:
+                continue
+            if target not in publish_paths:
+                print(f"UNPUBLISHED link target in {rel}:{line}: {href} -> {target}")
+                ok = False
+    return ok
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="Only verify that all source files exist.")
@@ -76,6 +130,8 @@ def main(argv: list[str] | None = None) -> int:
     root_files = [Path(item) for item in manifest["root_files"]]
     output_files = [Path("output") / item for item in manifest["output_files"]]
     guide_files = guide_files_from_manifest(root_files)
+    publish_paths = set(root_files + output_files)
+    html_files = [rel for rel in root_files + output_files if rel.suffix.lower() == ".html"]
 
     if args.check:
         ok = True
@@ -84,6 +140,7 @@ def main(argv: list[str] | None = None) -> int:
         for rel in output_files:
             ok = check_file(source_root / rel, repo_root / rel) and ok
         ok = check_guide_links(source_root, guide_files) and ok
+        ok = check_internal_links(source_root, publish_paths, html_files) and ok
         if ok:
             print("tm-site source check: OK")
             return 0
