@@ -262,10 +262,56 @@ td a:hover {
     padding: 12px;
 }
 
+.evidence-group-muted {
+    background: #0f1f38;
+}
+
 .evidence-group h4 {
     color: #fff;
     font-size: 14px;
     margin-bottom: 8px;
+}
+
+.evidence-group p {
+    color: #9ca9c4;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.published-guide-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.published-guide-card {
+    background: #132947;
+    border: 1px solid #315783;
+    border-radius: 6px;
+    color: #fff;
+    display: block;
+    padding: 10px 12px;
+    text-decoration: none;
+}
+
+.published-guide-card:hover {
+    border-color: #e94560;
+}
+
+.published-guide-card strong {
+    display: block;
+    color: #ff6f8d;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.published-guide-card span {
+    display: block;
+    color: #9ca9c4;
+    font-size: 12px;
+    line-height: 1.35;
+    margin-top: 4px;
 }
 
 .report-button,
@@ -530,12 +576,12 @@ td a:hover {
         </div>
     </section>
 
-    <section class="section" id="latest-source-reports">
-        <h2>Свежие материалы</h2>
+    <section class="section technical-section" id="latest-source-reports" hidden>
+        <h2>Технический индекс источников</h2>
         <div class="grid" id="wikiReportGroups">
             <article class="panel">
-                <h3>Материалы</h3>
-                <p class="muted">Здесь появятся свежие гайды, разборы и внешние источники.</p>
+                <h3>Report-файлы</h3>
+                <p class="muted">Этот блок показывается только с параметром <code>?debug=1</code>.</p>
             </article>
         </div>
     </section>
@@ -673,6 +719,50 @@ function sourceFamilyPanel(family) {
         '<ul class="source-list">' + files + '</ul><div class="badge-row">' + scripts + '</div></article>';
 }
 
+const PUBLIC_GUIDE_LINKS = [
+    {
+        match: /tm_meta|wiki_seed|full_pack|thinking|strategy/i,
+        href: '../strategy-guide.html',
+        title: 'Базовая стратегия',
+        note: 'Публичный гайд по мышлению, темпу и оценке карт'
+    },
+    {
+        match: /colony/i,
+        href: '../colonies-guide.html',
+        title: 'Колонии',
+        note: 'Публичный гайд по trade tempo, fleet и colony row'
+    },
+    {
+        match: /tag_synergy|combo|controversial/i,
+        href: '../strategy-guide.html',
+        title: 'Стратегические принципы',
+        note: 'Публичная выжимка по синергиям и спорным картам'
+    },
+    {
+        match: /turmoil|crisis/i,
+        href: '../turmoil-guide.html',
+        title: 'Turmoil',
+        note: 'Публичный гайд по партиям, делегатам и событиям'
+    }
+];
+
+function publicGuideForSource(item) {
+    const haystack = [item.title || '', item.path || ''].join(' ');
+    return PUBLIC_GUIDE_LINKS.find(link => link.match.test(haystack));
+}
+
+function uniqueGuideLinks(items) {
+    const seen = new Set();
+    const links = [];
+    for (const item of items || []) {
+        const link = publicGuideForSource(item);
+        if (!link || seen.has(link.href)) continue;
+        seen.add(link.href);
+        links.push(link);
+    }
+    return links;
+}
+
 function reportHref(item) {
     const path = String(item.path || '');
     if (!path) return '#';
@@ -681,7 +771,7 @@ function reportHref(item) {
 
 function publicSourceMessage(title) {
     return '<div class="source-note"><strong>' + escapeText(title || 'Материал') + '</strong><br>' +
-        'Полный текст этого материала пока не опубликован как отдельная публичная страница. В wiki уже используется только безопасная метка источника: название, группа и счетчик упоминаний.</div>';
+        'Это техническая запись индекса источников. В обычной wiki показываются публичные гайды и счетчики, а непубличные очереди не выдаются за материалы.</div>';
 }
 
 function evidenceGroupTitles(data) {
@@ -714,14 +804,23 @@ function renderCardEvidence(cardName, data) {
         .filter(groupId => evidence.groups && evidence.groups[groupId])
         .map(groupId => {
             const group = evidence.groups[groupId];
-            const links = (group.latest || []).map(item => (
-                '<button type="button" class="evidence-source-button" data-source-title="' + escapeText(item.title || item.path) + '">' +
-                '<strong>' + escapeText(item.title || item.path) + '</strong>' +
-                '<span>Источник учтен в оценке; полный текст пройдет публичную вычитку отдельно</span></button>'
+            const count = Number(group.count || 0);
+            if (groupId === 'externalEvidence') {
+                return '<div class="evidence-group evidence-group-muted"><h4>' +
+                    escapeText(groupTitles[groupId] || groupId) + ' · ' + escapeText(count) + '</h4>' +
+                    '<p>Счетчик внешних сигналов, которые уже учтены в рейтинге. Детальные обзоры будут отдельными страницами.</p></div>';
+            }
+            const guideLinks = uniqueGuideLinks(group.latest || []);
+            const links = guideLinks.map(link => (
+                '<a class="published-guide-card" href="' + escapeText(link.href) + '">' +
+                '<strong>' + escapeText(link.title) + '</strong>' +
+                '<span>' + escapeText(link.note) + '</span></a>'
             )).join('');
             return '<div class="evidence-group"><h4>' + escapeText(groupTitles[groupId] || groupId) +
-                ' · ' + escapeText(group.count || 0) + '</h4>' +
-                (links || '<span class="muted">Материалов пока нет</span>') + '<div class="source-note-target"></div></div>';
+                ' · ' + escapeText(count) + '</h4>' +
+                (links ? '<div class="published-guide-strip">' + links + '</div>' :
+                    '<p>Внутренняя проверка учтена в рейтинге.</p>') +
+                '</div>';
         })
         .join('');
     titleEl.textContent = evidence.name || cardName;
@@ -729,7 +828,8 @@ function renderCardEvidence(cardName, data) {
     detailsEl.innerHTML = '<h3>' + escapeText(evidence.name || cardName) + '</h3>' +
         '<div class="badge-row"><span class="badge">Score ' + escapeText(evidence.score) + '</span>' +
         '<span class="badge">Tier ' + escapeText(evidence.tier) + '</span>' +
-        '<span class="badge">' + escapeText(evidence.totalReports || 0) + ' источников</span></div>' +
+        '<span class="badge">' + escapeText(evidence.totalReports || 0) + ' источников в индексе</span></div>' +
+        '<p class="muted">Ниже показаны только публичные материалы и безопасные счетчики. Непубличные очереди источников больше не выглядят как пустые статьи.</p>' +
         '<div class="card-evidence-grid">' + groupCards + '</div>';
 }
 
@@ -785,8 +885,9 @@ fetch('wiki-data.json')
             statCard(stats.cotdLinkedCards || 0, 'карт с COTD'),
             statCard(stats.timingProfileCards || 0, 'карт с timing-профилем')
         ].join('');
-        document.getElementById('wikiReportGroups').innerHTML = (reports.groups || []).map(reportList).join('');
         if (new URLSearchParams(window.location.search).get('debug') === '1') {
+            document.getElementById('latest-source-reports').hidden = false;
+            document.getElementById('wikiReportGroups').innerHTML = (reports.groups || []).map(reportList).join('');
             document.getElementById('source-families').hidden = false;
             document.getElementById('wikiSourceFamilies').innerHTML =
                 '<article class="panel"><h3>Build</h3><p class="muted">' +
