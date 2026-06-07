@@ -22,17 +22,8 @@ jobs:
       - name: Install Node dependencies
         run: npm install
 
-      - name: Check publish files against canonical source
-        run: python tools/site/sync-site.py --check
-
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Verify tier list sprite cells
-        run: node tools/site/test-tierlist-sprite-cells.mjs
-
-      - name: Verify tier list card modals
-        run: node tools/site/test-tierlist-card-modals.mjs
-
-      - name: Verify local site asset requests
-        run: node tools/site/test-tierlist-network.mjs
+      - name: Run site checks
+        run: npm run test:site

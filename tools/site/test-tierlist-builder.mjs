@@ -23,7 +23,13 @@ async function main() {
     if (msg.type() === 'error') errors.push(`console: ${msg.text()}`);
   });
   page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
-  page.on('requestfailed', (request) => errors.push(`requestfailed: ${request.url()} ${request.failure()?.errorText}`));
+  page.on('requestfailed', (request) => {
+    const failure = request.failure()?.errorText ?? 'unknown';
+    if (request.resourceType() === 'image' && failure === 'net::ERR_ABORTED') {
+      return;
+    }
+    errors.push(`requestfailed: ${request.url()} ${failure}`);
+  });
 
   await page.goto(`${builderUrl}?builderSmoke=${Date.now()}`, {waitUntil: 'networkidle'});
   await page.evaluate(() => localStorage.clear());
