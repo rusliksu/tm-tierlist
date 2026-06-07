@@ -545,7 +545,7 @@ td a:hover {
         </div>
     </section>
 
-    <section class="section" id="automation">
+    <section class="section technical-section" id="automation" hidden>
         <h2>Что уже собрано</h2>
         <div class="panel">
             <h3>Индекс оценок и источников</h3>
@@ -563,9 +563,9 @@ td a:hover {
     </section>
 
     <section class="section" id="card-evidence">
-        <h2>Источники по карте</h2>
+        <h2>Материалы по карте</h2>
         <div class="panel">
-            <h3 id="cardEvidenceTitle">Источники по карте</h3>
+            <h3 id="cardEvidenceTitle">Материалы по карте</h3>
             <div class="card-evidence-toolbar">
                 <input id="cardEvidenceSearch" class="card-evidence-input" list="cardEvidenceOptions" placeholder="Power Plant" autocomplete="off">
                 <datalist id="cardEvidenceOptions"></datalist>
@@ -596,7 +596,7 @@ td a:hover {
         </div>
     </section>
 
-    <section class="section">
+    <section class="section technical-section" hidden>
         <h2>Первый срез wiki</h2>
         <div class="grid">
             <article class="panel" id="cards">
@@ -618,7 +618,7 @@ td a:hover {
         </div>
     </section>
 
-    <section class="section" id="promoted-reports">
+    <section class="section technical-section" id="promoted-reports" hidden>
         <h2>Материалы, которые уже можно поднимать</h2>
         <div class="table-wrap">
             <table>
@@ -660,7 +660,7 @@ td a:hover {
         </div>
     </section>
 
-    <section class="section" id="sterling-vents">
+    <section class="section technical-section" id="sterling-vents" hidden>
         <h2>Первый карточный пример</h2>
         <article class="panel">
             <h3>Sterling Vents</h3>
@@ -769,6 +769,8 @@ function reportHref(item) {
     return '../' + path.split('/').map(encodeURIComponent).join('/');
 }
 
+const DEBUG_MODE = new URLSearchParams(window.location.search).get('debug') === '1';
+
 function publicSourceMessage(title) {
     return '<div class="source-note"><strong>' + escapeText(title || 'Материал') + '</strong><br>' +
         'Это техническая запись индекса источников. В обычной wiki показываются публичные гайды и счетчики, а непубличные очереди не выдаются за материалы.</div>';
@@ -795,42 +797,37 @@ function renderCardEvidence(cardName, data) {
     if (!evidence) {
         titleEl.textContent = cardName || 'Card evidence';
         detailsEl.className = 'card-evidence-summary muted';
-        detailsEl.textContent = cardName ? 'Indexed evidence не найден.' : 'Card evidence не найден.';
+        detailsEl.textContent = cardName ? 'Для этой карты пока нет отдельного публичного материала.' : 'Выберите карту, чтобы открыть связанные материалы.';
         return;
     }
     const groupTitles = evidenceGroupTitles(data);
-    const groupOrder = ['guides', 'advisor', 'smartbot', 'externalEvidence'];
-    const groupCards = groupOrder
-        .filter(groupId => evidence.groups && evidence.groups[groupId])
-        .map(groupId => {
-            const group = evidence.groups[groupId];
-            const count = Number(group.count || 0);
-            if (groupId === 'externalEvidence') {
-                return '<div class="evidence-group evidence-group-muted"><h4>' +
-                    escapeText(groupTitles[groupId] || groupId) + ' · ' + escapeText(count) + '</h4>' +
-                    '<p>Счетчик внешних сигналов, которые уже учтены в рейтинге. Детальные обзоры будут отдельными страницами.</p></div>';
-            }
-            const guideLinks = uniqueGuideLinks(group.latest || []);
-            const links = guideLinks.map(link => (
-                '<a class="published-guide-card" href="' + escapeText(link.href) + '">' +
-                '<strong>' + escapeText(link.title) + '</strong>' +
-                '<span>' + escapeText(link.note) + '</span></a>'
-            )).join('');
-            return '<div class="evidence-group"><h4>' + escapeText(groupTitles[groupId] || groupId) +
-                ' · ' + escapeText(count) + '</h4>' +
-                (links ? '<div class="published-guide-strip">' + links + '</div>' :
-                    '<p>Внутренняя проверка учтена в рейтинге.</p>') +
-                '</div>';
-        })
-        .join('');
+    const groups = evidence.groups || {};
+    const publicGuides = uniqueGuideLinks(Object.values(groups).flatMap(group => group.latest || []));
+    if (publicGuides.length === 0) {
+        publicGuides.push(PUBLIC_GUIDE_LINKS[0]);
+    }
+    const guideCards = publicGuides.map(link => (
+        '<a class="published-guide-card" href="' + escapeText(link.href) + '">' +
+        '<strong>' + escapeText(link.title) + '</strong>' +
+        '<span>' + escapeText(link.note) + '</span></a>'
+    )).join('');
+    const publicGuideBlock =
+        '<div class="evidence-group"><h4>Связанные гайды</h4><div class="published-guide-strip">' + guideCards + '</div></div>';
+    const debugGroups = DEBUG_MODE ? Object.keys(groups).map(groupId => {
+        const group = groups[groupId];
+        return '<div class="evidence-group evidence-group-muted"><h4>' +
+            escapeText(groupTitles[groupId] || groupId) + ' · ' + escapeText(Number(group.count || 0)) +
+            '</h4><p>Технический счетчик источников для сверки сборки wiki.</p></div>';
+    }).join('') : '';
     titleEl.textContent = evidence.name || cardName;
     detailsEl.className = 'card-evidence-summary';
+    const sourceBadge = DEBUG_MODE ?
+        '<span class="badge">' + escapeText(evidence.totalReports || 0) + ' источников в индексе</span>' : '';
     detailsEl.innerHTML = '<h3>' + escapeText(evidence.name || cardName) + '</h3>' +
         '<div class="badge-row"><span class="badge">Score ' + escapeText(evidence.score) + '</span>' +
         '<span class="badge">Tier ' + escapeText(evidence.tier) + '</span>' +
-        '<span class="badge">' + escapeText(evidence.totalReports || 0) + ' источников в индексе</span></div>' +
-        '<p class="muted">Ниже показаны только публичные материалы и безопасные счетчики. Непубличные очереди источников больше не выглядят как пустые статьи.</p>' +
-        '<div class="card-evidence-grid">' + groupCards + '</div>';
+        sourceBadge + '</div>' +
+        '<div class="card-evidence-grid">' + publicGuideBlock + debugGroups + '</div>';
 }
 
 function setCardEvidenceSelection(cardName, data, updateUrl) {
@@ -851,7 +848,7 @@ function setupCardEvidence(data) {
     optionsEl.innerHTML = cards.map(name => '<option value="' + escapeText(name) + '"></option>').join('');
     quickEl.innerHTML = ((data.cardEvidenceStats || {}).topCards || []).slice(0, 8).map(item => (
         '<button type="button" class="card-evidence-button" data-card="' + escapeText(item.name) + '">' +
-        escapeText(item.name) + ' · ' + escapeText(item.totalReports) + '</button>'
+        escapeText(item.name) + (DEBUG_MODE ? ' · ' + escapeText(item.totalReports) : '') + '</button>'
     )).join('');
 
     const openSelected = () => {
@@ -885,7 +882,8 @@ fetch('wiki-data.json')
             statCard(stats.cotdLinkedCards || 0, 'карт с COTD'),
             statCard(stats.timingProfileCards || 0, 'карт с timing-профилем')
         ].join('');
-        if (new URLSearchParams(window.location.search).get('debug') === '1') {
+        if (DEBUG_MODE) {
+            document.getElementById('automation').hidden = false;
             document.getElementById('latest-source-reports').hidden = false;
             document.getElementById('wikiReportGroups').innerHTML = (reports.groups || []).map(reportList).join('');
             document.getElementById('source-families').hidden = false;
