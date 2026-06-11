@@ -2789,7 +2789,7 @@ bindControls();
 loadCards().catch((error) => {
     qs("#statusLine").textContent = error.message;
     qs("#summaryLine").textContent = "Не удалось загрузить карты";
-    qs("#poolZone").innerHTML = '<div class="load-note">Проверьте, что страница открыта через локальный сервер или GitHub Pages.</div>';
+    qs("#poolZone").innerHTML = '<div class="load-note">Проверьте, что страница открыта через локальный сервер или продовый tierlist.</div>';
 });
 </script>
 </body>
