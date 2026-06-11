@@ -4,9 +4,9 @@ Site-only repository for the public Terraforming Mars tier list pages.
 
 **Primary live site:** [tm.knightbyte.win/tierlist](https://tm.knightbyte.win/tierlist/)
 
-**Legacy GitHub Pages URL:** [rusliksu.github.io/tm-tierlist](https://rusliksu.github.io/tm-tierlist/)
+**Disabled legacy URL:** `https://rusliksu.github.io/tm-tierlist/`
 
-This repo intentionally contains only the GitHub Pages surface:
+This repo intentionally contains only the static tier list site surface:
 
 - landing and guide pages
 - generated tier list HTML
@@ -20,8 +20,8 @@ smartbot runtime, canonical card data, or shared brain packages.
 
 - canonical site source lives in `apps/tm-site/src/`
 - publish files live at the repo root and under `output/`
-- GitHub Pages publishes the legacy URL from branch `main`
-- `tm.knightbyte.win/tierlist/` is a VPS static mirror of the same publish files
+- production is served from a VPS static release under `tm.knightbyte.win/tierlist/`
+- GitHub Pages is disabled to avoid maintaining two public versions
 - `tools/site/sync-site.py` checks and syncs canonical source to publish paths
 - `tools/site/test-tierlist-network.mjs` verifies local page asset requests
 
@@ -36,7 +36,7 @@ npm run test:site
 ## Tier List Builder
 
 The interactive builder is source-owned in `apps/tm-site/src/tierlist-builder.html`
-and mirrored to the root `tierlist-builder.html` for GitHub Pages.
+and mirrored to the root `tierlist-builder.html` for the publish layout.
 
 Builder card data is generated into `apps/tm-site/src/tierlist-builder-assets.js`
 and mirrored to the root `tierlist-builder-assets.js`. The uniform card images
@@ -83,7 +83,7 @@ tm-tierlist/
 
 - Keep site source changes in `apps/tm-site/src/`.
 - Run `npm run test:site` before pushing.
-- Use `main` for the GitHub Pages source and the `tm.knightbyte.win/tierlist/` mirror.
+- Use `main` as the source for VPS static releases served at `tm.knightbyte.win/tierlist/`.
 - Keep advisor, extension, smartbot, and data changes in their own repos.
 
 ## License

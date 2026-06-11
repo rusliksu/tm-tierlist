@@ -1,7 +1,7 @@
-"""Sync the tm-site source tree into the current GitHub Pages publish layout.
+"""Sync the tm-site source tree into the current static publish layout.
 
 The source-owned site lives under ``apps/tm-site/src`` while the current publish
-target remains the repository root and ``output/`` directory.
+target remains the repository root and ``output/`` directory for VPS releases.
 """
 
 from __future__ import annotations

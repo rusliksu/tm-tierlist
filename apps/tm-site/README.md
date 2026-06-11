@@ -1,10 +1,10 @@
 # tm-site
 
-`apps/tm-site/src` is the source-owned site tree for GitHub Pages content.
+`apps/tm-site/src` is the source-owned tree for the static tier list site.
 
-Published files still live in the repo root because the current Pages flow expects
-them there. Use `npm run site:sync` to sync source-owned landing, guide, builder,
-and asset files back to the publish target.
+Published files still live in the repo root because the production VPS release
+consumes that layout. Use `npm run site:sync` to sync source-owned landing,
+guide, builder, and asset files back to the publish target.
 
 Generated tierlist pages are source-owned under `apps/tm-site/src/output` and are
 mirrored to the current publish target `output/` by the tierlist generator.
