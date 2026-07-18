@@ -363,6 +363,7 @@ TERRAFORMING MARS TIER LIST — RANKING
    75  HE3 Lobbyists
    75  Hypersensitive Silicon Chip Factory
    75  Darkside Meteor Bombardment
+   75  Quantum Research
    74  Big Asteroid
    74  GMO Contract
    74  Homeostasis Bureau
