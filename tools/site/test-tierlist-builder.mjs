@@ -9,7 +9,7 @@ const expectedVersionPart = 'uniform-3x4-480x640-q96-corpdom';
 const categories = [
   ['corporations', 'Корпорации', '68'],
   ['preludes', 'Прелюдии', '105'],
-  ['projects', 'Проекты', '717'],
+  ['projects', 'Проекты', '718'],
   ['ceos', 'CEO', '37'],
 ];
 
