@@ -10,5 +10,5 @@
 
 ## 3. Выпуск
 
-- [ ] 3.1 Зафиксировать и опубликовать task-owned site change.
-- [ ] 3.2 Создать VPS release, атомарно переключить `current` и выполнить HTTP smoke с rollback target.
+- [x] 3.1 Зафиксировать и опубликовать task-owned site change.
+- [x] 3.2 Создать VPS release, атомарно переключить `current` и выполнить HTTP smoke с rollback target.
