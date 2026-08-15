@@ -6,7 +6,8 @@
   "scripts": {
     "site:check": "python tools/site/sync-site.py --check",
     "site:sync": "python tools/site/sync-site.py",
-    "test:site": "npm run site:check && npm run test:tierlist-sprites && npm run test:tierlist-modals && npm run test:tierlist-builder-assets && npm run test:tierlist-builder:served && npm run test:tierlist-network",
+    "test:site": "npm run site:check && npm run test:sentry-client && npm run test:tierlist-sprites && npm run test:tierlist-modals && npm run test:tierlist-builder-assets && npm run test:tierlist-builder:served && npm run test:tierlist-network",
+    "test:sentry-client": "node tools/site/test-sentry-client.mjs",
     "test:tierlist-sprites": "node tools/site/test-tierlist-sprite-cells.mjs",
     "test:tierlist-modals": "node tools/site/test-tierlist-card-modals.mjs",
     "test:tierlist-builder-assets": "python tools/site/test-builder-assets.py",

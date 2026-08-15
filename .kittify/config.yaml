@@ -1,0 +1,12 @@
+project:
+  uuid: 757f636d-c599-4d8e-97eb-a3e589fd6845
+  slug: tm-tierlist
+  node_id: 382fd5d906cc
+  build_id: 4e31d655-fe04-5eb2-9384-eaad8466162d
+vcs:
+  type: git
+agents:
+  available:
+  - codex
+  auto_commit: true
+  lint_on_edit: false
