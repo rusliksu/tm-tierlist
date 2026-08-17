@@ -4,6 +4,7 @@
     "apps/tm-site/README.md",
     "apps/tm-site/site-manifest.json",
     "apps/tm-site/src/index.html",
+    "apps/tm-site/src/sentry-client.js",
     "apps/tm-site/src/tierlist-builder.html",
     "apps/tm-site/src/tierlist-builder-assets.js",
     "apps/tm-site/src/crisis-rules.html",
@@ -42,6 +43,10 @@
     {
       "path": "index.html",
       "source": "apps/tm-site/src/index.html"
+    },
+    {
+      "path": "sentry-client.js",
+      "source": "apps/tm-site/src/sentry-client.js"
     },
     {
       "path": "tierlist-builder.html",
