@@ -8,7 +8,7 @@ const builderUrl = process.env.BUILDER_URL || 'http://127.0.0.1:4173/tierlist-bu
 const expectedVersionPart = 'uniform-3x4-480x640-q96-corpdom';
 const categories = [
   ['corporations', 'Корпорации', '68'],
-  ['preludes', 'Прелюдии', '105'],
+  ['preludes', 'Прелюдии', '106'],
   ['projects', 'Проекты', '718'],
   ['ceos', 'CEO', '37'],
 ];

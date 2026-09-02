@@ -110,6 +110,13 @@ function parseCards(html) {
   return cards;
 }
 
+function loadExistingPayload() {
+  if (!fs.existsSync(outputPath)) return {};
+  const text = fs.readFileSync(outputPath, 'utf8');
+  const match = text.match(/=\s*(\{[\s\S]*\});?\s*$/);
+  return match ? JSON.parse(match[1]) : {};
+}
+
 function resolveImage(card, imageIndex) {
   const map = imageIndex.byType.get(card.type) || imageIndex.byType.get('');
   if (!map) return '';
@@ -122,6 +129,7 @@ function resolveImage(card, imageIndex) {
 
 function main() {
   const html = fs.readFileSync(sourceHtml, 'utf8');
+  const existingPayload = loadExistingPayload();
   const cards = parseCards(html);
   const imageIndex = listImages();
   const cardImages = {};
@@ -145,6 +153,7 @@ function main() {
       unmatched: unmatched.length,
     },
     unmatched,
+    cardMetadata: existingPayload.cardMetadata || {},
   };
 
   const body = `window.TM_BUILDER_ASSETS = ${JSON.stringify(payload, null, 2)};\n`;
