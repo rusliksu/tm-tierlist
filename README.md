@@ -114,6 +114,12 @@ tm-tierlist/
 - Use `main` as the source for VPS static releases served at `tm.knightbyte.win/tierlist/`.
 - Keep advisor, extension, smartbot, and data changes in their own repos.
 
+The landing page's update date comes from the static release's
+`release-manifest.json` field `generated_utc`, formatted in UTC for RU and EN.
+This is the date of the site release, not a change to card ratings. The manifest
+is fetched without caching; if it is missing or invalid (including local previews),
+the page shows that the update date is unavailable instead of guessing a date.
+
 ## License
 
 This is a fan project. Terraforming Mars is designed by Jacob Fryxelius and

@@ -410,7 +410,7 @@ body {
 
 <div class="footer">
     Terraforming Mars Tier List &mdash; <a href="https://github.com/rusliksu/tm-tierlist">github.com/rusliksu/tm-tierlist</a>
-    <br><span data-ru="Обновлено: Июль 2026" data-en="Last updated: Jul 2026">Обновлено: Июль 2026</span>
+    <br><span id="release-date" data-ru="Дата обновления недоступна" data-en="Update date unavailable">Дата обновления недоступна</span>
 </div>
 
 <script>
@@ -501,6 +501,26 @@ document.querySelectorAll('.lang-switch a').forEach(a => {
         switchLang(a.dataset.lang);
     });
 });
+
+async function loadReleaseDate() {
+    try {
+        const response = await fetch('release-manifest.json', {cache: 'no-store'});
+        if (!response.ok) return;
+        const manifest = await response.json();
+        if (typeof manifest?.generated_utc !== 'string') return;
+        const date = new Date(manifest.generated_utc);
+        if (!Number.isFinite(date.getTime())) return;
+        const options = {timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric'};
+        const label = document.getElementById('release-date');
+        label.dataset.ru = 'Обновлено: ' + date.toLocaleDateString('ru-RU', options);
+        label.dataset.en = 'Last updated: ' + date.toLocaleDateString('en-GB', options);
+        label.textContent = label.dataset[currentLang];
+    } catch {
+        // Keep the unavailable label when no valid release manifest is served.
+    }
+}
+
+loadReleaseDate();
 </script>
 </body>
 </html>
