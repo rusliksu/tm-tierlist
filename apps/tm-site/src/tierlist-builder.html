@@ -1225,6 +1225,7 @@ body.presentation .tier-label .tier-name {
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script src="tierlist-builder-assets.js?v=metadata-fallback-20260518"></script>
+<script src="card-name-compat.js"></script>
 <script>
 const STORAGE_KEY = "tm-tierlist-builder:saves:v1";
 const DRAFT_KEY = "tm-tierlist-builder:draft:v1";
@@ -1339,7 +1340,7 @@ function normalizeRatings(ratings) {
     for (const [name, value] of Object.entries(ratings)) {
         next[name] = clampScore(value);
     }
-    return next;
+    return window.TM_CARD_NAME_COMPAT.migrateRatings(next);
 }
 
 function cardByName(name) {
@@ -1393,7 +1394,7 @@ function normalizePlacements(tiers, savedPlacements = {}) {
     for (const id of Object.keys(next)) {
         next[id] = Array.isArray(savedPlacements[id]) ? Array.from(new Set(savedPlacements[id])) : [];
     }
-    return next;
+    return window.TM_CARD_NAME_COMPAT.migratePlacements(next);
 }
 
 function setTiers(tiers, placements = state.placements) {
@@ -1734,12 +1735,12 @@ function restoreRatingSession() {
     state.search = String(session.search || "");
 
     const queue = Array.isArray(session.queue)
-        ? session.queue.filter((name) => cardByName(name))
+        ? session.queue.map(window.TM_CARD_NAME_COMPAT.canonicalName).filter((name) => cardByName(name))
         : [];
     state.ratingQueue = queue.length > 0 ? queue : visibleCards().map((card) => card.name);
     state.ratingIndex = Math.max(0, Math.min(Number(session.index) || 0, state.ratingQueue.length));
     state.ratingMode = true;
-    state.ratingCurrentName = String(session.currentName || currentRatingCard()?.name || "");
+    state.ratingCurrentName = window.TM_CARD_NAME_COMPAT.canonicalName(String(session.currentName || currentRatingCard()?.name || ""));
     state.activeScoreText = String(session.activeScoreText ?? "0");
     const parsed = parseRatingScoreText(state.activeScoreText);
     state.activeScore = parsed.valid ? parsed.score : null;

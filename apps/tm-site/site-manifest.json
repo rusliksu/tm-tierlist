@@ -3,6 +3,7 @@
   "root_files": [
     "index.html",
     "sentry-client.js",
+    "card-name-compat.js",
     "meta-thinking-guide.html",
     "tierlist-builder.html",
     "tierlist-builder-assets.js",
