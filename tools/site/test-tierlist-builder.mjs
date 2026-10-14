@@ -38,13 +38,17 @@ async function main() {
   await page.getByRole('button', {name: 'Проекты', exact: true}).click();
   await page.locator('#searchInput').fill('Ace Veteran Squad');
   await page.waitForFunction(() => document.querySelector('#poolCount')?.textContent?.trim() === '1');
-  const missingArt = await page.locator('#poolZone .sprite-art').evaluate((element) => ({
-    background: getComputedStyle(element).backgroundImage,
-    label: element.textContent.trim(),
-  }));
+  const missingArt = await page.locator('#poolZone .sprite-art').evaluate((element) => {
+    const result = {background: getComputedStyle(element).backgroundImage, label: element.textContent.trim()};
+    element.hidden = true;
+    result.hiddenDisplay = getComputedStyle(element).display;
+    element.hidden = false;
+    return result;
+  });
   if (missingArt.background !== 'none' || missingArt.label !== 'Ace Veteran Squad') {
     throw new Error('Card without artwork must show its own name, not the first sprite cell');
   }
+  if (missingArt.hiddenDisplay !== 'none') throw new Error('Hidden text fallback must not overlay loaded artwork');
   await page.locator('#searchInput').fill('');
 
   const results = {};
