@@ -54,6 +54,13 @@ Cards without existing site artwork keep a named text fallback. Refreshing files
 does not deploy the VPS site. The builder reads the refreshed card pool and uses
 the same named fallback where no image or sprite cell exists.
 
+Old personal ratings and builder saves using `TerraLabs Research` are normalized
+to `Terralabs Research` when loaded, including drafts, JSON imports and resumed
+rating sessions. Scores and tier order stay intact; if both spellings exist, the
+canonical score and placement win (including a score of zero). Reading does not
+bulk-rewrite stored lists; the next normal save/export uses canonical names.
+This compatibility mapping does not change the site's base ratings.
+
 ## Tier List Builder
 
 The interactive builder is source-owned in `apps/tm-site/src/tierlist-builder.html`
