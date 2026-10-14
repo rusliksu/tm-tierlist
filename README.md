@@ -33,6 +33,27 @@ npm run site:check
 npm run test:site
 ```
 
+## Refreshing published ratings
+
+Canonical evaluations stay in the advisor repository. To refresh tier-list pages
+from a local advisor checkout without replacing this site's CSS, JavaScript or
+sprite sheets:
+
+```powershell
+python tools/site/refresh-tierlist.py --advisor-root C:\Users\Ruslan\tm\tm-tierlist
+python tools/site/test-tierlist-ratings.py --advisor-root C:\Users\Ruslan\tm\tm-tierlist
+npm run test:site
+```
+
+The generated manifest pins the source commit, evaluation-file hash, category
+counts and score/tier fingerprints. CI checks both languages and publish mirrors
+against that pin without needing access to the private advisor repository.
+Existing counted wiki links are pinned from the previous public site snapshot
+and retained exactly; refreshing ratings does not silently replace their context.
+Cards without existing site artwork keep a named text fallback. Refreshing files
+does not deploy the VPS site. The builder reads the refreshed card pool and uses
+the same named fallback where no image or sprite cell exists.
+
 ## Tier List Builder
 
 The interactive builder is source-owned in `apps/tm-site/src/tierlist-builder.html`
