@@ -843,6 +843,13 @@ body.drag-active {
     background-color: #050b16;
 }
 
+.sprite-art.text-art {
+    display: grid;
+    place-items: center;
+    padding: 8px;
+    text-align: center;
+}
+
 .score-badge {
     display: none;
     position: absolute;
@@ -1647,8 +1654,8 @@ async function loadCards() {
             score,
             mechanics,
             roles,
-            spritePosition: thumb?.style.backgroundPosition || "0px 0px",
-            spriteSize: thumb?.style.backgroundSize || "1440px 5300px"
+            spritePosition: thumb?.style.backgroundPosition || "",
+            spriteSize: thumb?.style.backgroundSize || ""
         };
         card.imageCandidates = imageCandidates(card);
         cards.push(card);
@@ -1798,9 +1805,14 @@ function buildCardArt(card, options = {}) {
     fallback.className = "sprite-art";
     fallback.hidden = true;
     const spriteScale = (options.spriteWidth || state.cardSize) / 80;
-    fallback.style.backgroundImage = `url("${SPRITE_URL}")`;
-    fallback.style.backgroundSize = scaleCssPixels(card.spriteSize, spriteScale);
-    fallback.style.backgroundPosition = scaleCssPixels(card.spritePosition, spriteScale);
+    if (card.spritePosition && card.spriteSize) {
+        fallback.style.backgroundImage = `url("${SPRITE_URL}")`;
+        fallback.style.backgroundSize = scaleCssPixels(card.spriteSize, spriteScale);
+        fallback.style.backgroundPosition = scaleCssPixels(card.spritePosition, spriteScale);
+    } else {
+        fallback.classList.add("text-art");
+        fallback.textContent = card.label || card.name;
+    }
 
     let candidateIndex = 0;
     const candidates = options.candidates || card.imageCandidates || [];
