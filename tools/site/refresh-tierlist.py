@@ -48,6 +48,9 @@ def main():
     spec.loader.exec_module(generator)
     generator.LANG_RU = True
     evaluations, card_index, image_mapping, names_ru = generator.load_data()
+    manifest_path = ROOT / "apps/tm-site/tierlist-ratings-manifest.json"
+    previous_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    preserved_evidence = previous_manifest["preservedWikiEvidence"]
     builder_assets = (SOURCE / "tierlist-builder-assets.js").read_text(encoding="utf-8")
     metadata = json.loads(re.search(r"=\s*(\{.*\});?\s*$", builder_assets, re.DOTALL)[1]).get("cardMetadata", {})
     # Keep assets already supplied by the site; missing artwork uses its text fallback.
@@ -55,6 +58,8 @@ def main():
     manifest = {"sourceRepo": "rusliksu/tm-advisor",
                 "sourceCommit": subprocess.check_output(["git", "-C", str(advisor), "rev-parse", "HEAD"], text=True).strip(),
                 "evaluationsSha256": hashlib.sha256((advisor / "data/evaluations.json").read_bytes()).hexdigest(),
+                "sourceSiteCommit": previous_manifest["sourceSiteCommit"],
+                "preservedWikiEvidence": preserved_evidence,
                 "categories": {}}
     tier_counts = {}
     for category in generator.CARD_TYPES:
@@ -70,6 +75,8 @@ def main():
             tiers = generator.get_cards_for_category(category, evaluations, card_index, names_ru)
             for group in tiers.values():
                 for card in group:
+                    if card["name"] in preserved_evidence:
+                        card["wiki_evidence"] = preserved_evidence[card["name"]]
                     # Category identity is known even when the card-facts index is incomplete.
                     if not card["card_type"]:
                         card_type = generator.resolve_card_type(card["name"], evaluations[card["name"]], card_index)

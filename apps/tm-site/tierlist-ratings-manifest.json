@@ -2,6 +2,189 @@
   "sourceRepo": "rusliksu/tm-advisor",
   "sourceCommit": "2845c39197b27e99797c9d68b4d84a56b60023f5",
   "evaluationsSha256": "316a31f9764dc241bfe9279e601210c92cf199a76f477f2575c826862f79c60a",
+  "sourceSiteCommit": "e2e76bc40433d557c32b35121e744cc970e0ea23",
+  "preservedWikiEvidence": {
+    "Quantum Extractor": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Asteroid Mining Consortium": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Research Coordination": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Protected Valley": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Protected Habitats": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Titanium Mine": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Asteroid Mining": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Great Dam": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Toll Station": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Ants": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Shuttles": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Casinos": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Water Import From Europa": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Pets": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Colonizer Training Camp": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Immigrant City": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Wave Power": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Extreme-Cold Fungus": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Energy Saving": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "GHG Factories": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Martian Survey": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Tropical Resort": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Soletta": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Power Infrastructure": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Caretaker Contract": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "SF Memorial": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Solar Power": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Release of Inert Gases": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Lava Tube Settlement": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    },
+    "Security Fleet": {
+      "totalReports": 1,
+      "groups": {
+        "advisor": 1
+      }
+    }
+  },
   "categories": {
     "all": {
       "count": 1329,

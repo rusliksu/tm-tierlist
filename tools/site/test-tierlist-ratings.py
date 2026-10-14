@@ -56,6 +56,7 @@ def main():
     all_names = None
     category_counts = {}
     category_tiers = {}
+    preserved_evidence = manifest["preservedWikiEvidence"] if manifest else {}
     for category, allowed in CATEGORIES.items():
         expected = {name: row for name, row in evaluations.items()
                     if allowed is None or row["type"] in allowed} if evaluations else None
@@ -70,6 +71,8 @@ def main():
             assert set(cards.rows) == set(modal), f"DOM/modal coverage differs: {filename}"
             for name, row in cards.rows.items():
                 assert row == {"score": modal[name]["score"], "tier": modal[name]["tier"]}, f"DOM/modal rating differs: {name}"
+                if name in preserved_evidence:
+                    assert modal[name].get("wiki_evidence") == preserved_evidence[name], f"Wiki evidence lost or changed: {name}"
             if expected is not None:
                 missing = set(expected) - set(cards.rows)
                 extra = set(cards.rows) - set(expected)
