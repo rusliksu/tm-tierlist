@@ -27,7 +27,17 @@ try {
       assert.ok(box && box.x >= 0 && box.x + box.width <= (mobile ? 390 : 1440) && box.y + box.height < (mobile ? 844 : 1000), `${path}: visible above the fold`);
       assert.ok(box.height >= 44, `${path}: touch-sized target`);
       assert.equal(await page.getByText(ru ? 'Личный список не меняет базовые оценки.' : 'Your personal list does not change the base ratings.', {exact: true}).isVisible(), true);
-      await link.click();
+      if (mobile) {
+        await link.tap();
+      } else {
+        await link.focus();
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('Shift+Tab');
+        assert.equal(await link.evaluate(el => el === document.activeElement && el.matches(':focus-visible')), true);
+        assert.equal(await link.evaluate(el => getComputedStyle(el).outlineStyle), 'solid');
+        await page.keyboard.press('Enter');
+      }
+      await page.waitForURL('**/tierlist-builder.html');
       assert.equal(new URL(page.url()).pathname, '/tierlist-builder.html');
       await page.locator('#poolZone .maker-card').first().waitFor({state: 'attached'});
       assert.equal(await page.locator('h1').isVisible(), true);
