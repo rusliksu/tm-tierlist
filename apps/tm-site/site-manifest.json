@@ -2,6 +2,7 @@
   "source_root": "apps/tm-site/src",
   "root_files": [
     "index.html",
+    "builder-entry.css",
     "sentry-client.js",
     "card-name-compat.js",
     "meta-thinking-guide.html",
