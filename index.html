@@ -504,7 +504,7 @@ document.querySelectorAll('.lang-switch a').forEach(a => {
 
 async function loadReleaseDate() {
     try {
-        const response = await fetch('release-manifest.json', {cache: 'no-store'});
+        const response = await fetch('release-date.json', {cache: 'no-store'});
         if (!response.ok) return;
         const manifest = await response.json();
         if (typeof manifest?.generated_utc !== 'string') return;
@@ -516,7 +516,7 @@ async function loadReleaseDate() {
         label.dataset.en = 'Last updated: ' + date.toLocaleDateString('en-GB', options);
         label.textContent = label.dataset[currentLang];
     } catch {
-        // Keep the unavailable label when no valid release manifest is served.
+        // Never fetch the full manifest as a fallback for missing date metadata.
     }
 }
 

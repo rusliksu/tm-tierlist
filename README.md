@@ -114,11 +114,23 @@ tm-tierlist/
 - Use `main` as the source for VPS static releases served at `tm.knightbyte.win/tierlist/`.
 - Keep advisor, extension, smartbot, and data changes in their own repos.
 
-The landing page's update date comes from the static release's
-`release-manifest.json` field `generated_utc`, formatted in UTC for RU and EN.
-This is the date of the site release, not a change to card ratings. The manifest
-is fetched without caching; if it is missing or invalid (including local previews),
-the page shows that the update date is unavailable instead of guessing a date.
+The landing page fetches only `release-date.json`, a compact projection of the
+static release manifest's `generated_utc` field, formatted in UTC for RU and EN.
+This is the site release date, not a change to card ratings. It is fetched without
+caching; missing or invalid date metadata shows an unavailable label. There is
+no browser fallback to the full release manifest.
+
+After writing `release-manifest.json` into a prepared, inactive static release,
+generate its date projection before verifying and activating that release:
+
+```bash
+python tools/site/write-release-date.py /absolute/path/to/prepared-static-release
+```
+
+The writer validates and copies the exact timestamp, never uses the current
+clock, and leaves the full manifest untouched. Include the generated
+`release-date.json` in release verification alongside the generated full manifest;
+do not commit either runtime file or generate the date in the live directory.
 
 ## License
 
