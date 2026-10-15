@@ -5,16 +5,25 @@ const baseUrl = process.env.SITE_BASE_URL;
 if (!baseUrl) throw new Error('Run through tools/site/run-static-server.mjs');
 const browser = await chromium.launch({headless: true});
 const errors = [];
-const manifestUrl = `${baseUrl}/release-manifest.json`;
+const fullManifestRequests = [];
+const manifestUrl = `${baseUrl}/release-date.json`;
+
+function watch(page) {
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('request', request => {
+    if (new URL(request.url()).pathname.endsWith('/release-manifest.json')) fullManifestRequests.push(request.url());
+  });
+}
 
 try {
   const context = await browser.newContext({timezoneId: 'America/Los_Angeles'});
   const page = await context.newPage();
-  page.on('pageerror', error => errors.push(error.message));
+  watch(page);
   let pending;
   const requestSeen = page.waitForRequest(manifestUrl, {timeout: 5000}).catch(error => error);
   await page.route(manifestUrl, route => { pending = route; });
   await page.goto(baseUrl, {waitUntil: 'domcontentloaded'});
+  assert.deepEqual(fullManifestRequests, [], 'Loading the date must not request the full release manifest');
   const footer = page.locator('.footer span');
   assert.equal(await footer.textContent(), 'Дата обновления недоступна');
   await page.locator('[data-lang="en"]').click();
@@ -44,7 +53,7 @@ try {
   ]) {
     const context = await browser.newContext();
     const page = await context.newPage();
-    page.on('pageerror', error => errors.push(error.message));
+    watch(page);
     await page.route(manifestUrl, route => reply ? route.fulfill(reply) : route.abort());
     await page.goto(baseUrl, {waitUntil: 'domcontentloaded'});
     await page.evaluate(() => loadReleaseDate());
@@ -56,7 +65,8 @@ try {
     await context.close();
   }
   assert.deepEqual(errors, []);
-  console.log('Release date: manifest, UTC day, RU/EN, late response, next release and unavailable manifest PASS');
+  assert.deepEqual(fullManifestRequests, [], 'Error handling must not fall back to the full manifest');
+  console.log('Release date: compact metadata only, UTC day, RU/EN, late response, next release and error fallback PASS');
 } finally {
   await browser.close();
 }

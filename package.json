@@ -7,7 +7,7 @@
     "site:check": "python tools/site/sync-site.py --check",
     "site:sync": "python tools/site/sync-site.py",
     "test:site": "npm run site:check && npm run test:tierlist-ratings && npm run test:sentry-client && npm run test:release-date && npm run test:tierlist-sprites && npm run test:tierlist-modals && npm run test:tierlist-builder-assets && npm run test:tierlist-saved-names && npm run test:tierlist-builder:served && npm run test:tierlist-network",
-    "test:release-date": "node tools/site/run-static-server.mjs node tools/site/test-release-date.mjs",
+    "test:release-date": "python tools/site/test-release-date-writer.py && node tools/site/run-static-server.mjs node tools/site/test-release-date.mjs",
     "test:tierlist-saved-names": "node tools/site/run-static-server.mjs node tools/site/test-tierlist-saved-names.mjs",
     "test:tierlist-ratings": "python tools/site/test-tierlist-ratings.py",
     "test:sentry-client": "node tools/site/test-sentry-client.mjs",
