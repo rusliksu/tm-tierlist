@@ -1666,7 +1666,8 @@ async function loadCards() {
     state.allCards = cards;
     const expansions = Array.from(new Set(cards.map((card) => card.expansion).filter(Boolean))).sort((a, b) => a.localeCompare(b));
     state.selectedExpansions = new Set(expansions);
-    restoreDraft();
+    const category = new URL(location.href).searchParams.get("category");
+    restoreDraft(categoryDefs.some((item) => item.id === category) ? category : "");
     restoreRatingSession();
     renderAll();
 }
@@ -2485,6 +2486,11 @@ function renderSavedList() {
 }
 
 function renderAll() {
+    const url = new URL(location.href);
+    if (url.searchParams.has("category") && url.searchParams.get("category") !== state.activeCategory) {
+        url.searchParams.set("category", state.activeCategory);
+        history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+    }
     const availableExpansions = normalizeSelectedExpansionsForCategory();
     document.body.style.setProperty("--card-w", `${state.cardSize}px`);
     document.body.classList.toggle("show-scores", state.showScores);
@@ -2583,16 +2589,19 @@ function persistDraft() {
     safeStorageWrite(DRAFT_KEY, draft);
 }
 
-function restoreDraft() {
+function restoreDraft(category = "") {
     const draft = safeStorageRead(DRAFT_KEY, null);
     if (!draft) {
+        state.activeCategory = category || state.activeCategory;
         qs("#listTitle").value = categoryDefaultTitle[state.activeCategory];
         qs("#listAuthor").value = "";
         return;
     }
     state.currentSaveId = draft.id === "draft" ? "" : (draft.id || "");
-    state.activeCategory = draft.category || state.activeCategory;
-    state.selectedExpansions = new Set(Array.isArray(draft.expansions) ? draft.expansions : Array.from(state.selectedExpansions));
+    state.activeCategory = category || draft.category || state.activeCategory;
+    state.selectedExpansions = new Set(category && category !== draft.category
+        ? availableExpansionsForCategory()
+        : Array.isArray(draft.expansions) ? draft.expansions : Array.from(state.selectedExpansions));
     setTiers(normalizeTiers(draft.tiers, draft.tierLabels || {}), draft.placements || {});
     state.ratings = normalizeRatings(draft.ratings);
     state.cardSize = Number(draft.cardSize || state.cardSize);

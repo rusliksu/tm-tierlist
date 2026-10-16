@@ -66,6 +66,14 @@ This compatibility mapping does not change the site's base ratings.
 The interactive builder is source-owned in `apps/tm-site/src/tierlist-builder.html`
 and mirrored to the root `tierlist-builder.html` for the publish layout.
 
+Catalog builder links select their category with `?category=all|corporations|preludes|projects|ceos`.
+This selects a card view without clearing the restored draft, placements, personal
+scores, title or author, and does not rewrite saved lists. Switching to a different
+category starts with that category's expansion filters; loading a saved list
+restores its own category and filters, including after reload. Unknown categories
+are ignored. The homepage keeps the usual draft/default behavior, and an explicit
+`rating=1` route resumes its existing rating queue, which takes precedence over a category hint.
+
 Builder card data is generated into `apps/tm-site/src/tierlist-builder-assets.js`
 and mirrored to the root `tierlist-builder-assets.js`. The uniform card images
 used by the builder live in `output/builder_cards/`.
