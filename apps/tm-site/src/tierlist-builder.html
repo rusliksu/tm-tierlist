@@ -2574,11 +2574,14 @@ function saveCurrent(forceNew = false) {
     toast("Тир-лист сохранён.");
 }
 
-function deleteCurrentSave() {
+async function deleteCurrentSave() {
     const id = qs("#savedLists").value;
     if (!id) return;
-    const saves = getSaves().filter((save) => save.id !== id);
-    safeStorageWrite(STORAGE_KEY, saves);
+    const selected = getSaves().find((save) => save.id === id);
+    if (!selected || !confirm(`Удалить сохранённый тир-лист «${selected.title || "Без названия"}»? Он исчезнет из сохранений. Текущий черновик останется.`)) return;
+    // Let cross-tab storage changes arrive after the blocking dialog.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    safeStorageWrite(STORAGE_KEY, getSaves().filter((save) => save.id !== id));
     if (state.currentSaveId === id) state.currentSaveId = "";
     renderSavedList();
     updateStatusLine();
@@ -2612,6 +2615,7 @@ function restoreDraft(category = "") {
 }
 
 function resetBoard() {
+    if (!confirm("Очистить расклад? Размещение карт и личные оценки текущего черновика будут сброшены. Сохранённые списки и оценки в каталогах останутся.")) return;
     state.placements = emptyPlacements();
     state.ratings = {};
     state.ratingCurrentName = "";
@@ -2622,6 +2626,7 @@ function resetBoard() {
 }
 
 function newList() {
+    if (!confirm("Создать новый тир-лист? Текущий черновик, расклад и личные оценки будут сброшены. Сохранённые списки и оценки в каталогах останутся.")) return;
     const author = qs("#listAuthor").value;
     state.currentSaveId = "";
     state.tiers = cloneDefaultTiers();
