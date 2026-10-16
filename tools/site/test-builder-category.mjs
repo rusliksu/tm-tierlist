@@ -12,7 +12,8 @@ const draft = {id: 'personal-list', title: 'My custom list', author: 'Test autho
   expansions: ['Base'], cardSize: 144, showScores: true};
 const session = {active: true, category: 'corporations', queue: ['Terralabs Research', 'CrediCor'],
   index: 0, currentName: 'Terralabs Research', activeScoreText: '57'};
-const fixtures = {[keys.draft]: draft, [keys.saves]: [draft, {...draft, id: 'second', title: 'Second list'}],
+const second = {...draft, id: 'second', title: 'Second list', category: 'projects', expansions: ['Colonies']};
+const fixtures = {[keys.draft]: draft, [keys.saves]: [draft, second],
   [keys.session]: session, [keys.ratings]: {'Terralabs Research': 0, CrediCor: 67}};
 const browser = await chromium.launch({headless: true});
 const errors = [];
@@ -65,6 +66,23 @@ try {
     const loaded = await exported(page);
     for (const field of ['title', 'author', 'tiers', 'placements', 'ratings', 'expansions']) assert.deepEqual(loaded[field], draft[field]);
     assert.equal((await stored(page))[keys.saves], before[keys.saves]);
+
+    // Without a category query, the normal saved draft controls reload.
+    await page.goto(`${baseUrl}/tierlist-builder.html`);
+    await page.locator('#poolZone .maker-card').first().waitFor();
+    await page.locator('#savedLists').selectOption('second');
+    if (mobile) await page.locator('#loadBtn').tap();
+    else await page.locator('#loadBtn').click();
+    assert.equal(await page.locator('#categoryChips .active').textContent(), 'Проекты');
+    assert.equal(new URL(page.url()).searchParams.get('category'), null);
+    await page.reload();
+    await page.locator('#poolZone .maker-card').first().waitFor();
+    assert.equal(await page.locator('#categoryChips .active').textContent(), 'Проекты');
+    const bareLoaded = await exported(page);
+    for (const field of ['title', 'author', 'tiers', 'placements', 'ratings', 'expansions']) assert.deepEqual(bareLoaded[field], second[field]);
+    assert.equal((await stored(page))[keys.saves], before[keys.saves]);
+    await page.locator('#savedLists').selectOption('personal-list');
+    await page.locator('#loadBtn').click();
 
     await page.goto(`${baseUrl}/tierlist-builder.html?category=unknown`);
     await page.locator('#poolZone .maker-card').first().waitFor();
