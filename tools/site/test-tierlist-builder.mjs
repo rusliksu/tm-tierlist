@@ -23,6 +23,13 @@ async function main() {
     if (msg.type() === 'error') errors.push(`console: ${msg.text()}`);
   });
   page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
+  page.on('dialog', async (dialog) => {
+    if (dialog.type() === 'confirm' && dialog.message().startsWith('Сменить категорию?')) await dialog.accept();
+    else {
+      errors.push(`Unexpected dialog: ${dialog.type()} ${dialog.message()}`);
+      await dialog.dismiss();
+    }
+  });
   page.on('requestfailed', (request) => {
     const failure = request.failure()?.errorText ?? 'unknown';
     if (request.resourceType() === 'image' && failure === 'net::ERR_ABORTED') {

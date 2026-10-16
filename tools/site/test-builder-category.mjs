@@ -55,6 +55,54 @@ try {
     assert.equal(new URL(page.url()).hash, '#board');
     assert.deepEqual(await stored(page), before, 'Navigation/export must not rewrite draft, saves, ratings or rating session');
 
+    // Cancel must leave both the visible draft and stored bytes untouched.
+    const dialogs = [];
+    let acceptChange = false;
+    const handleDialog = async dialog => {
+      dialogs.push({type: dialog.type(), message: dialog.message()});
+      if (acceptChange) await dialog.accept();
+      else await dialog.dismiss();
+    };
+    page.on('dialog', handleDialog);
+    const category = name => page.locator('#categoryChips').getByRole('button', {name, exact: true});
+    if (mobile) await category('Проекты').tap();
+    else await category('Проекты').click();
+    assert.equal(dialogs.length, 0, 'The current category is not a destructive switch');
+    const urlBefore = page.url();
+    if (mobile) await category('CEO').tap();
+    else {
+      await category('CEO').focus();
+      await page.keyboard.press('Enter');
+    }
+    assert.equal(await page.locator('#categoryChips .active').textContent(), 'Проекты', 'Cancel must retain the category');
+    assert.equal(dialogs.length, 1, 'A different category must request confirmation');
+    assert.equal(dialogs[0].type, 'confirm');
+    assert.match(dialogs[0].message, /черновик/i);
+    assert.equal(page.url(), urlBefore, 'Cancel must retain the route');
+    const cancelled = await exported(page);
+    for (const field of ['id', 'title', 'author', 'category', 'tiers', 'placements', 'ratings', 'expansions', 'cardSize', 'showScores']) {
+      assert.deepEqual(cancelled[field], result[field], `Cancel: ${field}`);
+    }
+    assert.deepEqual(await stored(page), before, 'Cancel must not write any user storage');
+    await page.reload();
+    await page.locator('#poolZone .maker-card').first().waitFor();
+    assert.deepEqual((await exported(page)).placements, draft.placements, 'Cancelled draft survives reload');
+
+    acceptChange = true;
+    if (mobile) await category('CEO').tap();
+    else await category('CEO').click();
+    assert.equal(dialogs.length, 2);
+    assert.equal(await page.locator('#categoryChips .active').textContent(), 'CEO');
+    assert.equal(new URL(page.url()).searchParams.get('category'), 'ceos');
+    const changed = await exported(page);
+    assert.equal(changed.category, 'ceos');
+    assert.deepEqual(changed.placements, {A: [], B: []});
+    assert.deepEqual(changed.ratings, {});
+    const afterChange = await stored(page);
+    assert.equal(JSON.parse(afterChange[keys.draft]).category, 'ceos');
+    for (const key of [keys.saves, keys.ratings, keys.session]) assert.equal(afterChange[key], before[key], key);
+    page.off('dialog', handleDialog);
+
     await page.locator('#savedLists').selectOption('personal-list');
     if (mobile) await page.locator('#loadBtn').tap();
     else await page.locator('#loadBtn').click();

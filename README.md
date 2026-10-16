@@ -76,6 +76,11 @@ category and filters in both cases. Unknown categories
 are ignored. The homepage keeps the usual draft/default behavior, and an explicit
 `rating=1` route resumes its existing rating queue, which takes precedence over a category hint.
 
+Manually choosing a different builder category asks for confirmation before clearing
+the current draft's placements and personal scores. Cancel keeps the draft, URL and
+stored data untouched. Confirm starts the selected category without changing saved
+lists or catalog ratings; choosing the current category does nothing.
+
 Builder card data is generated into `apps/tm-site/src/tierlist-builder-assets.js`
 and mirrored to the root `tierlist-builder-assets.js`. The uniform card images
 used by the builder live in `output/builder_cards/`.

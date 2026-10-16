@@ -2024,6 +2024,7 @@ function renderCategoryChips() {
         button.textContent = item.label;
         button.addEventListener("click", () => {
             if (state.activeCategory === item.id) return;
+            if (!confirm("Сменить категорию? Текущий расклад и личные оценки в черновике будут очищены. Сохранённые списки и оценки в каталогах останутся. Продолжить?")) return;
             state.activeCategory = item.id;
             state.selectedExpansions = new Set(availableExpansionsForCategory());
             state.placements = emptyPlacements();
