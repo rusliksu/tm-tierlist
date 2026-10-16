@@ -88,6 +88,20 @@ Clear board resets only the current draft; saved lists and catalog ratings remai
 Delete re-reads saved lists after confirmation, retaining lists saved in another
 tab while the dialog was open.
 
+JSON import validates and normalizes the entire file before changing the draft or
+saved lists. It requires a title, author and tier-to-card placement map, as in
+existing exports. Invalid fields or storage write failures show an error without
+replacing the current draft. Imported lists receive a new ID, so an imported ID
+cannot overwrite an existing saved list. Global personal ratings stay untouched.
+Legacy files may omit category, tiers and other optional settings; `tierLabels`,
+numeric-string ratings, zero scores and old card aliases remain supported.
+Unknown card names are retained for compatibility with newer catalogs.
+Like loading a saved list, a successful import opens that list as the draft and
+exits the active rating session. A rejected import retains that session and queue.
+If the browser also denies rollback after a draft write failure, the original
+lists and draft remain intact, but an extra imported list may remain in storage;
+the error explicitly asks the user to check saved lists rather than claiming success.
+
 Builder card data is generated into `apps/tm-site/src/tierlist-builder-assets.js`
 and mirrored to the root `tierlist-builder-assets.js`. The uniform card images
 used by the builder live in `output/builder_cards/`.

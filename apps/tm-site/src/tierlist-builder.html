@@ -1370,7 +1370,7 @@ function parseRatingScoreText(value) {
 }
 
 function normalizeTiers(tiers, legacyLabels = {}) {
-    const source = Array.isArray(tiers) && tiers.length > 0 ? tiers : cloneDefaultTiers();
+    const source = Array.isArray(tiers) && tiers.length > 0 ? tiers : defaultTiers.map((tier) => ({...tier, label: legacyLabels[tier.id] || tier.label}));
     const seen = new Set();
     const normalized = [];
 
@@ -2532,7 +2532,7 @@ function buildSave(id = state.currentSaveId || crypto.randomUUID()) {
     };
 }
 
-function applySave(save) {
+function applySave(save, persist = true) {
     state.currentSaveId = save.id || "";
     state.activeCategory = save.category || "corporations";
     state.selectedExpansions = new Set(Array.isArray(save.expansions) ? save.expansions : []);
@@ -2551,7 +2551,7 @@ function applySave(save) {
     setRatingRoute(false);
     qs("#listTitle").value = save.title || categoryDefaultTitle[state.activeCategory] || "Мой тир-лист Terraforming Mars";
     qs("#listAuthor").value = save.author || "";
-    persistDraft();
+    if (persist) persistDraft();
     renderAll();
 }
 
@@ -2660,20 +2660,89 @@ function exportCurrent() {
     URL.revokeObjectURL(link.href);
 }
 
+function parseImportedSave(text) {
+    const save = JSON.parse(text.replace(/^\uFEFF/, ""));
+    const record = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+    const check = (condition, message) => { if (!condition) throw new Error(message); };
+    const name = (value) => typeof value === "string" && value.trim().length > 0;
+    const reserved = new Set(["__proto__", "constructor", "prototype", "pool"]);
+    const numeric = (value) => typeof value === "number" || (typeof value === "string" && /^\d+$/.test(value));
+    check(record(save), "нужен объект тир-листа.");
+    check(name(save.title) && name(save.author), "нужны название и автор тир-листа.");
+    check(record(save.placements) && Object.keys(save.placements).length > 0, "нет корректного расклада.");
+    check(save.category === undefined || categoryDefs.some((item) => item.id === save.category), "неизвестная категория.");
+    if (save.tierLabels !== undefined) {
+        check(record(save.tierLabels) && Object.values(save.tierLabels).every((label) => typeof label === "string"), "неверные названия уровней.");
+    }
+    if (save.tiers !== undefined) {
+        check(Array.isArray(save.tiers) && save.tiers.length > 0, "неверный список уровней.");
+        const ids = new Set();
+        for (const tier of save.tiers) {
+            check(record(tier) && name(tier.id) && !reserved.has(tier.id) && !ids.has(tier.id), "неверный или повторяющийся уровень.");
+            check(tier.label === undefined || typeof tier.label === "string", "неверное название уровня.");
+            check(tier.color === undefined || (typeof tier.color === "string" && /^#[0-9a-f]{6}$/i.test(tier.color)), "неверный цвет уровня.");
+            ids.add(tier.id);
+        }
+    }
+    const tiers = normalizeTiers(save.tiers, save.tierLabels || {});
+    const ids = new Set(tiers.map((tier) => tier.id));
+    for (const [id, cards] of Object.entries(save.placements)) {
+        check(ids.has(id) && Array.isArray(cards) && cards.every(name), "расклад содержит неверный уровень или название карты.");
+    }
+    if (save.ratings !== undefined) {
+        check(record(save.ratings), "неверный список личных оценок.");
+        for (const [card, value] of Object.entries(save.ratings)) {
+            check(name(card) && !reserved.has(card) && numeric(value) && Number.isInteger(Number(value)) && Number(value) >= 0 && Number(value) <= 100, "личные оценки должны быть целыми числами от 0 до 100.");
+        }
+    }
+    check(save.expansions === undefined || (Array.isArray(save.expansions) && save.expansions.every(name)), "неверный список дополнений.");
+    check(save.showScores === undefined || typeof save.showScores === "boolean", "неверная настройка показа оценок.");
+    const size = save.cardSize === undefined ? 144 : Number(save.cardSize);
+    check((save.cardSize === undefined || numeric(save.cardSize)) && Number.isInteger(size) && size >= 92 && size <= 176, "неверный размер карт.");
+    const now = new Date().toISOString();
+    return {
+        id: crypto.randomUUID(), title: save.title.trim(), author: save.author.trim(),
+        category: save.category || "corporations", expansions: save.expansions || [], tiers,
+        placements: normalizePlacements(tiers, save.placements), ratings: normalizeRatings(save.ratings),
+        cardSize: size, showScores: save.showScores || false, createdAt: now, updatedAt: now
+    };
+}
+
 function importSave(file) {
     const reader = new FileReader();
     reader.onload = () => {
+        let save;
         try {
-            const save = JSON.parse(String(reader.result || "{}"));
-            save.id = crypto.randomUUID();
-            save.updatedAt = new Date().toISOString();
-            applySave(save);
-            saveCurrent(false);
-            toast("JSON импортирован.");
-        } catch {
-            toast("Не удалось прочитать JSON.");
+            save = parseImportedSave(String(reader.result || ""));
+        } catch (error) {
+            toast(error instanceof SyntaxError ? "Не удалось прочитать JSON: неверный синтаксис." : `Неверный тир-лист: ${error.message}`);
+            return;
         }
+        try {
+            const previous = localStorage.getItem(STORAGE_KEY);
+            const saves = previous ? JSON.parse(previous) : [];
+            if (!Array.isArray(saves) || saves.some((item) => !item || typeof item !== "object" || Array.isArray(item))) throw new Error("Invalid saved lists");
+            localStorage.setItem(STORAGE_KEY, JSON.stringify([...saves, save]));
+            try {
+                localStorage.setItem(DRAFT_KEY, JSON.stringify(save));
+            } catch (error) {
+                try {
+                    if (previous === null) localStorage.removeItem(STORAGE_KEY);
+                    else localStorage.setItem(STORAGE_KEY, previous);
+                } catch {
+                    toast("Не удалось открыть импорт. Черновик не изменён; проверьте список сохранений.");
+                    return;
+                }
+                throw error;
+            }
+        } catch {
+            toast("Не удалось сохранить импорт. Текущий черновик не изменён.");
+            return;
+        }
+        applySave(save, false);
+        toast("JSON импортирован.");
     };
+    reader.onerror = () => toast("Не удалось прочитать файл JSON.");
     reader.readAsText(file, "utf-8");
 }
 
