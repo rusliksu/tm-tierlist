@@ -13,11 +13,11 @@ try {
     });
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
-    const cases = [{path: '/index.html', ru: true}, {path: '/index.html', ru: false}];
+    const cases = [{path: '/index.html', ru: true, category: 'corporations'}, {path: '/index.html', ru: false, category: 'corporations'}];
     for (const category of ['all', 'corporations', 'preludes', 'projects', 'ceos']) {
-      for (const ru of [true, false]) cases.push({path: `/output/tierlist_${category}${ru ? '_ru' : ''}.html`, ru});
+      for (const ru of [true, false]) cases.push({path: `/output/tierlist_${category}${ru ? '_ru' : ''}.html`, ru, category});
     }
-    for (const {path, ru} of cases) {
+    for (const {path, ru, category} of cases) {
       await page.goto(baseUrl + path, {waitUntil: 'domcontentloaded'});
       if (path === '/index.html' && !ru) await page.locator('[data-lang="en"]').click();
       const link = page.getByRole('link', {name: ru ? 'Создать свой тир-лист' : 'Create your tier list', exact: true});
@@ -37,9 +37,13 @@ try {
         assert.equal(await link.evaluate(el => getComputedStyle(el).outlineStyle), 'solid');
         await page.keyboard.press('Enter');
       }
-      await page.waitForURL('**/tierlist-builder.html');
+      await page.waitForURL(url => url.pathname.endsWith('/tierlist-builder.html'));
       assert.equal(new URL(page.url()).pathname, '/tierlist-builder.html');
+      assert.equal(new URL(page.url()).searchParams.get('category'), path === '/index.html' ? null : category);
       await page.locator('#poolZone .maker-card').first().waitFor({state: 'attached'});
+      const labels = {all: 'Все карты', corporations: 'Корпорации', preludes: 'Прелюдии', projects: 'Проекты', ceos: 'CEO'};
+      assert.equal(await page.locator('#categoryChips .active').textContent(), labels[category]);
+      assert.equal(await page.locator('#poolZone .maker-card').count(), {all: 1329, corporations: 114, preludes: 116, projects: 1062, ceos: 37}[category]);
       assert.equal(await page.locator('h1').isVisible(), true);
     }
     await context.close();
