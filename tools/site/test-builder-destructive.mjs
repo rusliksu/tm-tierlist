@@ -10,6 +10,7 @@ const draft = {id: 'current', title: 'My personal list', author: 'Test author', 
   placements: {A: ['Terralabs Research'], B: ['CrediCor']}, ratings: {'Terralabs Research': 0, CrediCor: 67},
   expansions: ['Base'], cardSize: 132, showScores: true};
 const other = {...draft, id: 'other', title: 'Do not delete this list'};
+const concurrent = {...draft, id: 'concurrent', title: 'Saved in another tab'};
 const fixtures = {[keys.draft]: draft, [keys.saves]: [draft, other],
   [keys.session]: {active: true, category: 'corporations', queue: ['CrediCor'], index: 0, activeScoreText: '57'},
   [keys.ratings]: {'Terralabs Research': 0, CrediCor: 67}};
@@ -50,10 +51,16 @@ try {
         const before = await stored(page);
         const initial = await exported(page);
         const initialUrl = page.url();
+        const peer = action === 'deleteBtn' ? await context.newPage() : null;
+        if (peer) await peer.goto(`${baseUrl}/tierlist-builder.html`);
         const dialogs = [];
         let accept = false;
         page.on('dialog', async dialog => {
           dialogs.push({type: dialog.type(), text: dialog.message()});
+          if (accept && peer) await peer.evaluate(({key, save}) => {
+            const saves = JSON.parse(localStorage.getItem(key));
+            localStorage.setItem(key, JSON.stringify([...saves, save]));
+          }, {key: keys.saves, save: concurrent});
           if (accept) await dialog.accept(); else await dialog.dismiss();
         });
         const button = page.locator(`#${action}`);
@@ -78,11 +85,12 @@ try {
         accept = true;
         if (action === 'deleteBtn') await page.locator('#savedLists').selectOption('current');
         if (mobile) await button.tap(); else await button.click();
+        if (action === 'deleteBtn') await page.locator('#savedLists option[value="current"]').waitFor({state: 'detached'});
         assert.equal(dialogs.length, 2);
         const after = await stored(page);
         assert.equal(after[keys.ratings], before[keys.ratings], 'Catalog ratings stay unchanged');
         if (action === 'deleteBtn') {
-          assert.deepEqual(JSON.parse(after[keys.saves]), [other], 'Only the named list is removed');
+          assert.deepEqual(JSON.parse(after[keys.saves]), [other, concurrent], 'Only the named list is removed, including a save made while the dialog is open');
           assert.equal(after[keys.draft], before[keys.draft], 'Delete does not rewrite the draft');
           assert.equal(after[keys.session], before[keys.session]);
         } else {
@@ -105,7 +113,7 @@ try {
         const final = await exported(page);
         if (action === 'deleteBtn') {
           for (const field of fields) assert.deepEqual(final[field], initial[field], field);
-          assert.deepEqual(JSON.parse((await stored(page))[keys.saves]), [other]);
+          assert.deepEqual(JSON.parse((await stored(page))[keys.saves]), [other, concurrent]);
         } else {
           assert.deepEqual(final.ratings, {});
           assert.ok(Object.values(final.placements).every(cards => cards.length === 0));

@@ -2574,13 +2574,14 @@ function saveCurrent(forceNew = false) {
     toast("Тир-лист сохранён.");
 }
 
-function deleteCurrentSave() {
+async function deleteCurrentSave() {
     const id = qs("#savedLists").value;
     if (!id) return;
-    const saves = getSaves();
-    const selected = saves.find((save) => save.id === id);
+    const selected = getSaves().find((save) => save.id === id);
     if (!selected || !confirm(`Удалить сохранённый тир-лист «${selected.title || "Без названия"}»? Он исчезнет из сохранений. Текущий черновик останется.`)) return;
-    safeStorageWrite(STORAGE_KEY, saves.filter((save) => save.id !== id));
+    // Let cross-tab storage changes arrive after the blocking dialog.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    safeStorageWrite(STORAGE_KEY, getSaves().filter((save) => save.id !== id));
     if (state.currentSaveId === id) state.currentSaveId = "";
     renderSavedList();
     updateStatusLine();
