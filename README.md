@@ -81,6 +81,11 @@ the current draft's placements and personal scores. Cancel keeps the draft, URL 
 stored data untouched. Confirm starts the selected category without changing saved
 lists or catalog ratings; choosing the current category does nothing.
 
+New, Clear board and Delete also ask for confirmation before changing user data.
+Delete names the selected saved list and removes only that list, keeping the
+current draft. Cancel leaves the draft and storage untouched. Confirmed New or
+Clear board resets only the current draft; saved lists and catalog ratings remain.
+
 Builder card data is generated into `apps/tm-site/src/tierlist-builder-assets.js`
 and mirrored to the root `tierlist-builder-assets.js`. The uniform card images
 used by the builder live in `output/builder_cards/`.
