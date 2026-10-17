@@ -899,6 +899,44 @@ body.show-scores .score-badge {
     transform: translateY(0);
 }
 
+.import-preview {
+    width: min(480px, calc(100vw - 32px));
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    overflow-wrap: anywhere;
+}
+
+.import-preview::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.import-preview h2 {
+    margin-top: 0;
+}
+
+.import-preview dt {
+    color: var(--muted);
+    margin-top: 12px;
+}
+
+.import-preview dd {
+    margin: 4px 0 0;
+    font-weight: 600;
+    white-space: pre-wrap;
+}
+
+.import-preview-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
 body.presentation .topbar,
 body.presentation .control-panel {
     display: none;
@@ -1223,6 +1261,23 @@ body.presentation .tier-label .tier-name {
 </div>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<dialog id="importPreview" class="import-preview" aria-labelledby="importPreviewHeading" aria-describedby="importPreviewWarning">
+    <form method="dialog">
+        <h2 id="importPreviewHeading">Предпросмотр JSON</h2>
+        <dl>
+            <dt>Название</dt><dd id="importPreviewTitle"></dd>
+            <dt>Автор</dt><dd id="importPreviewAuthor"></dd>
+            <dt>Категория</dt><dd id="importPreviewCategory"></dd>
+            <dt>Размещено карт</dt><dd id="importPreviewCount"></dd>
+        </dl>
+        <p id="importPreviewWarning">Импорт откроет этот список вместо текущего черновика и завершит текущее оценивание. Сохранённые списки останутся. До подтверждения данные не изменятся.</p>
+        <div class="import-preview-actions">
+            <button id="cancelImportBtn" value="cancel" autofocus>Отмена</button>
+            <button id="confirmImportBtn" value="import" class="primary">Импортировать</button>
+        </div>
+    </form>
+</dialog>
 
 <script src="tierlist-builder-assets.js?v=metadata-fallback-20260518"></script>
 <script src="card-name-compat.js"></script>
@@ -2708,9 +2763,23 @@ function parseImportedSave(text) {
     };
 }
 
+function confirmImportedSave(save) {
+    const dialog = qs("#importPreview");
+    if (dialog.open) return Promise.resolve(false);
+    qs("#importPreviewTitle").textContent = save.title;
+    qs("#importPreviewAuthor").textContent = save.author;
+    qs("#importPreviewCategory").textContent = categoryDefs.find((item) => item.id === save.category).label;
+    qs("#importPreviewCount").textContent = String(new Set(Object.values(save.placements).flat()).size);
+    dialog.returnValue = "";
+    return new Promise((resolve) => {
+        dialog.addEventListener("close", () => resolve(dialog.returnValue === "import"), {once: true});
+        dialog.showModal();
+    });
+}
+
 function importSave(file) {
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
         let save;
         try {
             save = parseImportedSave(String(reader.result || ""));
@@ -2718,6 +2787,7 @@ function importSave(file) {
             toast(error instanceof SyntaxError ? "Не удалось прочитать JSON: неверный синтаксис." : `Неверный тир-лист: ${error.message}`);
             return;
         }
+        if (!await confirmImportedSave(save)) return;
         try {
             const previous = localStorage.getItem(STORAGE_KEY);
             const saves = previous ? JSON.parse(previous) : [];
@@ -2839,6 +2909,7 @@ function bindControls() {
         setPresentationMode(false);
     });
     document.addEventListener("keydown", (event) => {
+        if (qs("#importPreview").open) return;
         if (state.ratingMode && !event.target.closest("input, textarea, select")) {
             if (/^\d$/.test(event.key)) {
                 event.preventDefault();

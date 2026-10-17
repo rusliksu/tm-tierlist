@@ -89,7 +89,11 @@ Delete re-reads saved lists after confirmation, retaining lists saved in another
 tab while the dialog was open.
 
 JSON import validates and normalizes the entire file before changing the draft or
-saved lists. It requires a title, author and tier-to-card placement map, as in
+saved lists. A preview shows the title, author, category and number of unique
+placed cards. Only Import confirms the operation; Cancel, Escape and Enter on
+the initially focused Cancel button leave storage, draft and rating queue unchanged.
+Rating shortcuts are inactive while the preview is open. It requires a title,
+author and tier-to-card placement map, as in
 existing exports. Invalid fields or storage write failures show an error without
 replacing the current draft. Imported lists receive a new ID, so an imported ID
 cannot overwrite an existing saved list. Global personal ratings stay untouched.

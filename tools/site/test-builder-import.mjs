@@ -39,9 +39,16 @@ async function exported(page) {
   for await (const chunk of await (await pending).createReadStream()) chunks.push(chunk);
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
-async function upload(page, value) {
+async function selectFile(page, value) {
   await page.locator('#importFile').setInputFiles({name: 'fixture.json', mimeType: 'application/json',
     buffer: Buffer.from(typeof value === 'string' ? value : JSON.stringify(value))});
+}
+async function upload(page, value, preview = true) {
+  await selectFile(page, value);
+  if (preview) {
+    await page.locator('#importPreview').waitFor();
+    await page.locator('#confirmImportBtn').click();
+  }
   await page.locator('#toast.show').waitFor();
 }
 async function seed(page) {
@@ -62,12 +69,55 @@ try {
     try {
       await page.goto(`${base}/tierlist-builder.html?category=corporations#board`);
       await page.locator('#poolZone .maker-card').first().waitFor();
+      // A valid file must not replace the draft until the user explicitly confirms.
+      for (const [value, dismiss] of [[{...draft, title: '<img src=x onerror=alert(1)>'}, 'button'], [legacy, 'escape'], [draft, 'enter']]) {
+        await seed(page);
+        const before = await readStorage(page);
+        const beforeExport = await exported(page);
+        const url = page.url();
+        const chooser = page.waitForEvent('filechooser');
+        if (mobile) await page.locator('#importBtn').tap(); else await page.locator('#importBtn').click();
+        await (await chooser).setFiles({name: 'preview.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(value))});
+        await page.locator('#importPreview').waitFor({timeout: 3000});
+        assert.equal(await page.locator('#importPreviewTitle').textContent(), value.title);
+        assert.equal(await page.locator('#importPreviewAuthor').textContent(), value.author);
+        assert.equal(await page.locator('#importPreviewCategory').textContent(), 'Корпорации');
+        assert.equal(await page.locator('#importPreviewCount').textContent(), value === legacy ? '3' : '2');
+        assert.equal(await page.locator('#importPreview img').count(), 0, 'Preview renders untrusted names as text');
+        assert.deepEqual(await readStorage(page), before, 'Preview must not write data');
+        assert.equal(await page.locator('#cancelImportBtn').evaluate(el => el === document.activeElement), true);
+        if (dismiss === 'button') {
+          if (mobile) await page.locator('#cancelImportBtn').tap(); else await page.locator('#cancelImportBtn').click();
+        } else await page.keyboard.press(dismiss === 'escape' ? 'Escape' : 'Enter');
+        await page.locator('#importPreview').waitFor({state: 'hidden'});
+        assert.deepEqual(await readStorage(page), before, 'Cancel must preserve raw storage');
+        assert.equal(page.url(), url);
+        const afterExport = await exported(page);
+        for (const f of fields) assert.deepEqual(afterExport[f], beforeExport[f], `Cancel preview: ${f}`);
+        await page.reload();
+        await page.locator('#tierStack .maker-card[data-name="CrediCor"]').waitFor();
+        assert.deepEqual(await readStorage(page), before, 'Cancel reload');
+      }
+      await seed(page);
+      await page.goto(`${base}/tierlist-builder.html?rating=1`);
+      await page.locator('#ratingStage').waitFor();
+      const ratingBefore = await readStorage(page);
+      const ratingUrl = page.url();
+      await selectFile(page, legacy);
+      await page.locator('#importPreview').waitFor();
+      await page.keyboard.press('7');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('Escape');
+      await page.locator('#importPreview').waitFor({state: 'hidden'});
+      assert.deepEqual(await readStorage(page), ratingBefore, 'Preview keys must not edit the active rating queue');
+      assert.equal(page.url(), ratingUrl);
+      await page.goto(`${base}/tierlist-builder.html?category=corporations#board`);
       for (const [label, value] of invalid) {
         await seed(page);
         const before = await readStorage(page);
         const beforeExport = await exported(page);
         const url = page.url();
-        await upload(page, value);
+        await upload(page, value, false);
         try {
           assert.deepEqual(await readStorage(page), before, `${label}: rejected import must not write storage`);
           const afterExport = await exported(page);
@@ -141,7 +191,20 @@ try {
       for (const value of [{...draft, title: 'Modern list'}, legacy]) {
         await seed(page);
         const before = await readStorage(page);
-        await upload(page, value);
+        await selectFile(page, value);
+        await page.locator('#importPreview').waitFor();
+        assert.deepEqual(await readStorage(page), before, 'Wait for explicit import confirmation');
+        if (value !== legacy) {
+          const other = await context.newPage();
+          await other.goto(`${base}/tierlist-builder.html`);
+          await other.evaluate(({key, record}) => {
+            const saves = JSON.parse(localStorage.getItem(key));
+            localStorage.setItem(key, JSON.stringify([...saves, record]));
+          }, {key: keys.saves, record: {...draft, id: 'other-tab', title: 'Saved while preview was open'}});
+          await other.close();
+        }
+        if (mobile) await page.locator('#confirmImportBtn').tap(); else await page.locator('#confirmImportBtn').click();
+        await page.locator('#toast.show').waitFor();
         assert.equal(await page.locator('#listTitle').inputValue(), value.title);
         assert.equal(await page.locator('#listAuthor').inputValue(), value.author);
         const imported = await exported(page);
@@ -152,17 +215,24 @@ try {
         else assert.deepEqual(imported.tiers, draft.tiers);
         const after = await readStorage(page);
         const saves = JSON.parse(after[keys.saves]);
-        assert.equal(saves.length, 2);
+        assert.equal(saves.length, value === legacy ? 2 : 3);
         assert.deepEqual(saves[0], draft, 'Do not overwrite an existing saved list using imported id');
+        if (value !== legacy) assert.equal(saves[1].id, 'other-tab', 'Retain lists added while preview was open');
         assert.equal(after[keys.ratings], before[keys.ratings]);
         assert.equal(after[keys.session], null);
         await page.reload();
         await page.locator('#tierStack .maker-card[data-name="CrediCor"]').waitFor();
         const reloaded = await exported(page);
         for (const f of fields) assert.deepEqual(reloaded[f], imported[f], `Valid import reload: ${f}`);
+        const afterSuccess = await readStorage(page);
+        await selectFile(page, value);
+        await page.locator('#importPreview').waitFor();
+        await page.keyboard.press('Escape');
+        await page.locator('#importPreview').waitFor({state: 'hidden'});
+        assert.deepEqual(await readStorage(page), afterSuccess, 'Escape after a prior confirmation must not import again');
       }
       assert.deepEqual(errors, []);
-      console.log(`Safe import: ${mobile ? 'touch phone' : 'desktop'}, ${invalid.length} invalid files, three write failures + actual quota + rollback denial, modern+legacy+alias+zero+reload PASS`);
+      console.log(`Safe import: ${mobile ? 'touch phone' : 'desktop'}, preview/cancel/escape/default-enter/rating-keys, ${invalid.length} invalid files, three write failures + actual quota + rollback denial, modern+legacy+alias+zero+reload PASS`);
     } finally {await context.close();}
   }
   assert.deepEqual(failures, []);
