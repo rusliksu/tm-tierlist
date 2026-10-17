@@ -94,6 +94,7 @@ try {
       } else if (route === 'import' || route === 'conflict') {
         await page.locator('#importFile').setInputFiles({name: 'legacy.json', mimeType: 'application/json',
           buffer: Buffer.from(JSON.stringify(route === 'conflict' ? conflict : legacySave))});
+        await page.locator('#confirmImportBtn').click();
       }
       await page.waitForSelector(`#tierStack .maker-card[data-name="${cardName}"]`);
       const placements = route === 'conflict' ? {A: ['CrediCor', 'EcoLine'], B: [cardName]} : expectedPlacements;
