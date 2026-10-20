@@ -1350,6 +1350,24 @@ const originalImageMap = new Map(Object.entries(window.TM_BUILDER_ASSETS?.origin
 const cardMetadataMap = new Map(Object.entries(window.TM_BUILDER_ASSETS?.cardMetadata || {}));
 const builderImageVersion = window.TM_BUILDER_ASSETS?.builderImageVersion || "";
 
+function assetStemKey(value) {
+    let decoded = String(value ?? "");
+    try {
+        decoded = decodeURIComponent(decoded);
+    } catch (error) {
+        decoded = String(value ?? "");
+    }
+    return decoded.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+const assetByStem = new Map();
+for (const assetPath of assetSet) {
+    const assetMatch = /^(.+)\/([^/]+)\.(png|jpe?g|webp)$/i.exec(assetPath);
+    if (!assetMatch) continue;
+    const assetKey = `${assetMatch[1]}/${assetStemKey(assetMatch[2])}`;
+    if (!assetByStem.has(assetKey)) assetByStem.set(assetKey, assetPath);
+}
+
 const cardMetadataOverrides = {
     "Suitable Infrastructure": {type: "prelude", expansion: "Prelude 2"},
     "Hydrogen Bombardment": {type: "prelude", expansion: "Pathfinders"},
@@ -1616,18 +1634,34 @@ function versionedBuilderImage(url) {
     return `${url}?v=${encodeURIComponent(builderImageVersion)}`;
 }
 
+function assetCandidates(card) {
+    const exact = [];
+    const normalized = [];
+    for (const dir of imageDirs(card)) {
+        for (const stem of slugCandidates(card.name)) {
+            const candidate = `${dir}/${encodeURIComponent(stem)}.png`;
+            if (!assetSet.size) {
+                exact.push(candidate);
+                continue;
+            }
+            if (assetSet.has(candidate)) {
+                exact.push(candidate);
+                continue;
+            }
+            // Spellings differ between the catalog and the artwork file name:
+            // "Bio-Batteries" -> Biobatteries.png, "Co-leadership" -> CoLeadership.png.
+            const fallback = assetByStem.get(`${dir}/${assetStemKey(stem)}`);
+            if (fallback) normalized.push(fallback);
+        }
+    }
+    return [...exact, ...normalized];
+}
+
 function imageCandidates(card) {
     const direct = cardImageMap.get(card.name);
     const candidates = [];
     if (direct) candidates.push(versionedBuilderImage(direct));
-    for (const dir of imageDirs(card)) {
-        for (const stem of slugCandidates(card.name)) {
-            const candidate = `${dir}/${encodeURIComponent(stem)}.png`;
-            if (!assetSet.size || assetSet.has(candidate)) {
-                candidates.push(candidate);
-            }
-        }
-    }
+    candidates.push(...assetCandidates(card));
     return Array.from(new Set(candidates));
 }
 
@@ -1635,14 +1669,7 @@ function originalImageCandidates(card) {
     const direct = originalImageMap.get(card.name);
     const candidates = [];
     if (direct) candidates.push(direct);
-    for (const dir of imageDirs(card)) {
-        for (const stem of slugCandidates(card.name)) {
-            const candidate = `${dir}/${encodeURIComponent(stem)}.png`;
-            if (!assetSet.size || assetSet.has(candidate)) {
-                candidates.push(candidate);
-            }
-        }
-    }
+    candidates.push(...assetCandidates(card));
     return Array.from(new Set(candidates));
 }
 
