@@ -3,18 +3,93 @@
 # DO NOT EDIT MANUALLY
 
 spec_kitty:
-  schema_version: 3
-  version: 3.2.5
+  version: 3.2.7
   initialized_at: '2026-08-16T00:42:02.944018'
-  last_upgraded_at:
-  schema_capabilities:
-    canonical_context: true
-    event_log_authority: true
-    ownership_manifest: true
-    thin_shims: true
+  last_upgraded_at: '2026-10-26T10:06:52.592139+00:00'
+  schema_version: 3
 environment:
   python_version: 3.13.13
   platform: win32
   platform_version: Windows-11-10.0.26200-SP0
 migrations:
-  applied: []
+  applied:
+  - id: 3.2.6_decisions_event_log_merge_driver
+    applied_at: '2026-10-26T10:06:50.952844+00:00'
+    result: success
+    notes: 'Added .gitattributes entry: kitty-specs/**/decisions.events.jsonl merge=spec-kitty-event-log;
+      Configured git merge.spec-kitty-event-log.name; Configured git merge.spec-kitty-event-log.driver'
+  - id: 3.2.6_gate_artifact_merge_drivers
+    applied_at: '2026-10-26T10:06:51.257422+00:00'
+    result: success
+    notes: 'Added .gitattributes entry: kitty-specs/**/acceptance-matrix.json merge=spec-kitty-acceptance-matrix;
+      Configured git merge.spec-kitty-acceptance-matrix.name; Configured git merge.spec-kitty-acceptance-matrix.driver;
+      Added .gitattributes entry: kitty-specs/**/issue-matrix.md merge=spec-kitty-issue-matrix;
+      Configured git merge.spec-kitty-issue-matrix.name; Configured git merge.spec-kitty-issue-matrix.driver'
+  - id: 3.2.6_issue_matrix_driver_repoint
+    applied_at: '2026-10-26T10:06:51.370241+00:00'
+    result: success
+    notes: 'Added .gitattributes entry: kitty-specs/**/issue-matrix.json merge=spec-kitty-issue-matrix;
+      Configured git merge.spec-kitty-issue-matrix.name'
+  - id: 3.2.6_meta_traces_merge_drivers
+    applied_at: '2026-10-26T10:06:51.679862+00:00'
+    result: success
+    notes: 'Added .gitattributes entry: kitty-specs/**/meta.json merge=spec-kitty-meta;
+      Configured git merge.spec-kitty-meta.name; Configured git merge.spec-kitty-meta.driver;
+      Added .gitattributes entry: kitty-specs/**/traces/*.md merge=spec-kitty-traces;
+      Configured git merge.spec-kitty-traces.name; Configured git merge.spec-kitty-traces.driver'
+  - id: 3.2.6_retire_rtk_search_tooling
+    applied_at: '2026-10-26T10:06:51.695914+00:00'
+    result: skipped
+    notes: Not applicable
+  - id: 3.2.7_review_cycle_merge_driver
+    applied_at: '2026-10-26T10:06:51.865134+00:00'
+    result: success
+    notes: 'Added .gitattributes entry: kitty-specs/**/tasks/*/review-cycle-*.md merge=spec-kitty-review-cycle;
+      Configured git merge.spec-kitty-review-cycle.name; Configured git merge.spec-kitty-review-cycle.driver'
+  - id: normalize_activation_absence
+    applied_at: '2026-10-26T10:06:51.882077+00:00'
+    result: skipped
+    notes: Not applicable
+  - id: unify_charter_activation_promote_answers
+    applied_at: '2026-10-26T10:06:51.894632+00:00'
+    result: skipped
+    notes: Not applicable
+  - id: consolidate_charter_bundle_fold
+    applied_at: '2026-10-26T10:06:51.912941+00:00'
+    result: skipped
+    notes: Not applicable
+  - id: runtime_state_backfill
+    applied_at: '2026-10-26T10:06:51.977472+00:00'
+    result: skipped
+    notes: Not applicable
+  - id: verdict_provenance_backfill
+    applied_at: '2026-10-26T10:06:51.992619+00:00'
+    result: skipped
+    notes: Not applicable
+  - id: 3.2.8_provision_kitty_env
+    applied_at: '2026-10-26T10:06:52.016951+00:00'
+    result: success
+    notes: 'Created .kittify/.kitty.env; Registered env_file: ${SPEC_KITTY_HOME}/.kitty.env
+      in config.yaml; Added .kittify/.kitty.env to .gitignore; Added .kittify/.kitty.env
+      to .claudeignore'
+  - id: 3.2.7_heal_provenance_paths
+    applied_at: '2026-10-26T10:06:52.058970+00:00'
+    result: skipped
+    notes: Not applicable
+  - id: 3.2.6rc3_lint_report_gitignore_backfill
+    applied_at: '2026-10-26T10:06:52.087299+00:00'
+    result: success
+    notes: 'Added gitignore entry: .kittify/lint-report.json'
+  - id: 3.2.6rc3_narrow_cursor_gitignore
+    applied_at: '2026-10-26T10:06:52.113314+00:00'
+    result: success
+    notes: 'Removed managed blanket line: ''.cursor/''; Added gitignore entry: .cursor/rules/spec-kitty.mdc;
+      Added gitignore entry: .cursor/commands/; Added gitignore entry: .cursor/skills/'
+  - id: 3.2.6rc3_worktrees_gitignore_backfill
+    applied_at: '2026-10-26T10:06:52.461234+00:00'
+    result: success
+    notes: 'Added gitignore entry: .worktrees/'
+  - id: 3_3_1_context_sources_consolidation
+    applied_at: '2026-10-26T10:06:52.575821+00:00'
+    result: skipped
+    notes: Not applicable

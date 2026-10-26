@@ -1,5 +1,5 @@
 <!-- spec-kitty:orientation -->
-**Spec Kitty v3.2.5** — project: unknown (healthy)
+**Spec Kitty v3.2.7** — project: tm-site (healthy)
 
 Two usage patterns:
 - **Full mission** (spec → plan → tasks → implement → review → merge):

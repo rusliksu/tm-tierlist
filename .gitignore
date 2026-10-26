@@ -121,7 +121,6 @@ data/gen_err.txt
 .opencode/
 .windsurf/
 .gemini/
-.cursor/
 .qwen/
 .kilocode/
 .augment/
@@ -149,3 +148,9 @@ data/gen_err.txt
 .kittify/sync-state.json
 .kittify/workspaces/
 kitty-ops/ops-index.jsonl
+.kittify/.kitty.env
+.kittify/lint-report.json
+.cursor/rules/spec-kitty.mdc
+.cursor/commands/
+.cursor/skills/
+.worktrees/
